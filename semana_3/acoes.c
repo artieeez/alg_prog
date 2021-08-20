@@ -37,7 +37,7 @@ int main(void) {
         "Lojas Renner",
         "Grendene"
     };
-    const int disponivel_arr[QUANTIDADE_OPCOES] = {
+    int disponivel_arr[QUANTIDADE_OPCOES] = {
         GERDAU_DISPONIVEL,
         PETROBRAS_DISPONIVEL,
         RENNER_DISPONIVEL,
@@ -104,9 +104,29 @@ int main(void) {
             getchar();
             continue;
         }
+
+        /* Demonstação switch
+            registrar quantidade comprada e
+            subtrair do estoque disponivel
+        */
+        switch(opcao_selecionada) {
+            case 1: 
+                quantidade_vendida_arr[0] += acoes_compradas;
+                disponivel_arr[0] -= acoes_compradas;
+            case 2:
+                quantidade_vendida_arr[1] += acoes_compradas;
+                disponivel_arr[1] -= acoes_compradas;
+            case 3:
+                quantidade_vendida_arr[2] += acoes_compradas;
+                disponivel_arr[2] -= acoes_compradas;
+            case 4:
+                quantidade_vendida_arr[3] += acoes_compradas;
+                disponivel_arr[3] -= acoes_compradas;
+        }
     }
+    opcao_selecionada = 0;
+    acoes_compradas = 0;
     clear_screen();
-    quantidade_vendida_arr[opcao_selecionada - 1] = acoes_compradas;
     printf("Sucesso!\nPressione enter para continuar.");
     flush_in();
     getchar();
