@@ -23,17 +23,17 @@ int main(void) {
         }
     }
     if (todos_lados_sao_iguais) {
-        printf("\nOs valores inseridos formam um quadrado (Q)");
+        printf("\nOs valores inseridos formam um quadrado (Q)\n");
         return 0;
     }
 
     /* Checar se é um Retangulo (2 pares iguais de lados) */
     if (a == b) {
-        printf("\nOs valores inseridos formam um retângulo (Q)");
+        printf("\nOs valores inseridos formam um retângulo (Q)\n");
         return 0;
     }
 
     /* Else */
-    printf("\nOs valores inseridos formam um trapézio (T)");
+    printf("\nOs valores inseridos formam um trapézio (T)\n");
     return 0;
 }

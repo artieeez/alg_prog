@@ -19,7 +19,7 @@
 
 #define GRENDENE_CODIGO 4
 #define GRENDENE_DISPONIVEL 500
-#define GRENDENE_VALOR 1.20
+#define GRENDENE_VALOR 1.2
 
 /* Declaracao function prototypes */
 void clear_screen();
@@ -113,15 +113,19 @@ int main(void) {
             case 1: 
                 quantidade_vendida_arr[0] += acoes_compradas;
                 disponivel_arr[0] -= acoes_compradas;
+                break;
             case 2:
                 quantidade_vendida_arr[1] += acoes_compradas;
                 disponivel_arr[1] -= acoes_compradas;
+                break;
             case 3:
                 quantidade_vendida_arr[2] += acoes_compradas;
                 disponivel_arr[2] -= acoes_compradas;
+                break;
             case 4:
                 quantidade_vendida_arr[3] += acoes_compradas;
                 disponivel_arr[3] -= acoes_compradas;
+                break;
         }
     }
     opcao_selecionada = 0;
