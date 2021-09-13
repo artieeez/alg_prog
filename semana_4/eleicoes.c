@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 /* Declaracao function prototypes */
 void clear_screen();
@@ -38,7 +39,7 @@ int main(void) {
             ? 1 
             : 0;
 
-        print_table(&vote_count, tem_vencedor, tem_empate, votos_totais, vencedor_index, segundo_index);
+        print_table(vote_count, tem_vencedor, tem_empate, votos_totais, vencedor_index, segundo_index);
 
         /* 
             Coleta do voto */
@@ -50,7 +51,7 @@ int main(void) {
             Voto invalido handler */
         if (voto < 0 || voto > 3) {
             clear_screen();
-            printf("VOTO INVALIDO - Aperte enter para continuar.\n", voto);
+            printf("VOTO INVALIDO - Aperte enter para continuar.\n");
             vote_count[4]++;
             getchar();
             continue;
@@ -78,8 +79,8 @@ int main(void) {
         } while(continuar != 's' && continuar != 'n');
         voto = 5;
     }
-    print_table(&vote_count, tem_vencedor, tem_empate, votos_totais, vencedor_index, segundo_index);
-    
+    print_table(vote_count, tem_vencedor, tem_empate, votos_totais, vencedor_index, segundo_index);
+    return 0;
 }
 
 
