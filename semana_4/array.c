@@ -4,6 +4,7 @@
 
 /* Declaracao function prototypes */
 void flush_in();
+void print_array(int *array);
 
 /* Constantes */
 #define ARRAY_SIZE 10
@@ -35,6 +36,20 @@ int main(void) {
     printf("\n");
     print_array(array);
     printf("\n");
+    /* Calcula média de valores */
+    float media_valores_array = 0;
+    for(int i = 0; i < ARRAY_SIZE; i++) {
+        media_valores_array += array[i];
+    }
+    media_valores_array /= ARRAY_SIZE;
+    /* Calcula quantidade de valores maiores que a media */
+    int itens_maiores_que_media = 0;
+    for(int i = 0; i < ARRAY_SIZE; i++) {
+        if (array[i] > media_valores_array) itens_maiores_que_media++;
+    }
+    /* Imprime resultado */
+    printf("Numero de elementos do array com valor maior que a media: %d\n",
+        itens_maiores_que_media);
     return 0;
 }
 
