@@ -12,19 +12,24 @@
 #define QUANTIDADE_MAXIMA_ACOES 10000
 
 /* Declaracao function prototypes */
+/* Controle de UI */
 void clear_screen();
 void flush_in();
 void print_horizontal_line(char c, int width, int solid);
 void print_padded_border(char c, int padding_size, int left);
 void print_centered_string(char border_char, char *str, int width);
 void print_cell(char *str, int width, char align);
+/* Ordenar */
 void swap(int* xp, int* yp);
 void selectionSort(int arr[], int n);
+/* Utilitarios */
 int find_index(int key, int arr[], int n);
 
 int main(void)
 {
+    /* Utilizado para gerar numeros aleatorios */
     srand(time(0));
+
     /*
         1 - INICIALIZACAO */
 
@@ -34,8 +39,6 @@ int main(void)
     int acao_index = NUMAC; // index invalido por padrao
 
     /* Declaracao e inicializacao de listas com informacoes das acoes */
-    int quantidade_vendida_arr[NUMAC] = {0};
-
     int codigo[NUMAC] = {0};        // guarda codigo das ações
     int qtade_inicial[NUMAC] = {0}; // guarda estoque inicial das ações
     int qtade_vendida[NUMAC] = {0}; // guarda unidades vendidas das ações , inicializada com 0.
@@ -58,7 +61,7 @@ int main(void)
         do {
             valid = 1;
             preco[i] = (float)rand()/(float)(RAND_MAX/VALOR_MAXIMO_PRECO);
-            codigo[i] = (int)(rand() / (double) RAND_MAX * (ID_MAX + 1) + 1);
+            codigo[i] = (int)(rand() / (double) RAND_MAX * (ID_MAX + 1));
             qtade_inicial[i] = (int)(rand() / (double) RAND_MAX * (QUANTIDADE_MAXIMA_ACOES + 1));
             disponivel_arr[i] = qtade_inicial[i];
             j = 0;
@@ -146,7 +149,7 @@ int main(void)
 
         /*  Registrar quantidade comprada e
             subtrair do estoque disponivel */
-        quantidade_vendida_arr[acao_index] += acoes_compradas;
+        qtade_vendida[acao_index] += acoes_compradas;
         disponivel_arr[acao_index] -= acoes_compradas;
         float valor_gasto_temp = acoes_compradas * preco[acao_index];
         acoes_compradas_total += valor_gasto_temp;
@@ -165,7 +168,7 @@ int main(void)
         flush_in();
         getchar();
         clear_screen();
-    } while (acoes_compradas_total < 10000);
+    } while (acoes_compradas_total < VALOR_MAXIMO_COMPRAS);
 
     /*
         APRESENTACAO DE RELATORIO FINAL */
@@ -199,20 +202,23 @@ int main(void)
     print_padded_border(border_char, table_padding, 0); // Padded border
     print_horizontal_line(border_char, table_width, 1); // White space
 
-    /* Confecao de quadro final e calculo final */
+    /* Confecao de quadro final */
     for (int i = 0; i < NUMAC; i++)
     {
-        print_padded_border(border_char, table_padding, 1); // Padded border
-        printf("%-*d %-*dR$ %-*.2f",
-               column_width - 1,
-               i, // acao
-               column_width,
-               quantidade_vendida_arr[i], // Quantidade vendida
-               column_width - 3,
-               quantidade_vendida_arr[i] * preco[i]);   // Total faturado
-        print_padded_border(border_char, table_padding, 0); // Padded border
+        if (qtade_vendida[i] > 0) {
+            print_padded_border(border_char, table_padding, 1); // Padded border
+            printf("%-*d %-*dR$ %-*.2f",
+                column_width - 1,
+                codigo[i], // acao
+                column_width,
+                qtade_vendida[i], // Quantidade vendida
+                column_width - 3,
+                qtade_vendida[i] * preco[i]);   // Total faturado
+            print_padded_border(border_char, table_padding, 0); // Padded border
+        }   
     }
     print_horizontal_line(border_char, table_width, 1); // Linha horizontal
+
     /* Apresentacao de soma final */
     print_padded_border(border_char, table_padding, 1); // Padded border
     printf("%-*sR$ %-*.2f",
@@ -221,11 +227,22 @@ int main(void)
            column_width - 3,
            acoes_compradas_total);
     print_padded_border(border_char, table_padding, 0); // Padded border
-    /* Apresentação da media final */
-    print_padded_border(border_char, table_padding, 1); // Padded border
-    print_padded_border(border_char, table_padding, 0); // Padded border
 
-    
+    /* Apresentação da acao mais vendida */
+    print_padded_border(border_char, table_padding, 1); // Padded border
+    int acao_mais_vendida_index;
+    int vendas_acao_mais_vendida_temp = 0;
+    for (int i = 0; i < NUMAC; i++) {
+        if (qtade_vendida[i] > vendas_acao_mais_vendida_temp) {
+            acao_mais_vendida_index = i;
+        }
+    }
+    printf("%-*s %-*.2d",
+           column_width * 2,
+           "CODIGO DA ACAO MAIS VENDIDA",
+           column_width - 1,
+           codigo[acao_mais_vendida_index]);
+    print_padded_border(border_char, table_padding, 0); // Padded border
     print_horizontal_line(border_char, table_width, 1); // Linha horizontal
     return 0;
 }
@@ -324,24 +341,26 @@ void swap(int* xp, int* yp)
 void selectionSort(int arr[], int n)
 {
     int i, j, min_idx;
- 
-    // One by one move boundary of unsorted subarray
     for (i = 0; i < n - 1; i++) {
- 
-        // Find the minimum element in unsorted array
         min_idx = i;
         for (j = i + 1; j < n; j++)
             if (arr[j] < arr[min_idx])
                 min_idx = j;
- 
-        // Swap the found minimum element
-        // with the first element
         swap(&arr[min_idx], &arr[i]);
     }
 }
 
 /* Acha o index de um codigo no arr */
 int find_index(int key, int arr[], int n) {
+    /* 
+        Retorna o indice da acao no vetor, caso acao nao seja encontrada
+        retorna o n (index invalido).
+        Retornar o n quando a funcao nao obtive exito serve para
+        testar a existencia da chave <key> no vetor <arr>.
+        key   -> valor a ser buscado (codigo da acao)
+        arr[] -> vetor com codigos
+        n     -> tamanho do array
+     */
     int i = 0;
     int index = n;
     while (index == n && i < n) {

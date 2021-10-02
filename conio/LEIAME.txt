@@ -1,0 +1,8 @@
+1) Instalar ou Reinstalar o CodeBlocks com a opção devpak plugin marcada dentro de contrib plugins.
+
+2) Entrar em Settings >> Compiler >> Linker Settings. 
+
+3) Copiar as pastas lib e include de dentro do arquivo ZIP para C:\Arquivos de Programas\CodeBlocks\MinGW
+
+4) Adicionar uma Link Library com o caminho:
+C:\Arquivos de programas\CodeBlocks\MinGW\lib\libconio.a
