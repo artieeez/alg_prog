@@ -12,7 +12,7 @@
 #define ARROW_RIGHT 77
 #define ARROW_LEFT 75
 
-#define DEFAULT_HORIZONTAL_SPEED 1
+#define DEFAULT_HORIZONTAL_SPEED 8
 #define DEFAULT_VERTICAL_SPEED 2
 
 #define SAPO_WIDTH 8
@@ -56,6 +56,8 @@ typedef struct entity {
 
 struct text_info info;
 
+coordinates *create_pos(int x, int y);
+coordinates *get_new_pos(entity *en, int direction);
 entity *initialize_player();
 void draw_prop(render_data *obj);
 void desenha_borda(int x_min, int y_min, int x_max, int y_max);
@@ -64,10 +66,16 @@ render_data *create_render_data(
                     int height,
                     int width,
                     char *content[RENDERED_OBJECT_MAX_HEIGHT] );
-//int colide_com_a_borda(sapo player);
+bool is_out_of_boundary( entity *en );
 void move_prop(entity *en, int direction);
+entity *pack_entity(render_data *render,
+                    physics_data *physics,
+                    bool is_ac);
+void game_loop( entity *player);
+int capture_action();
 
 entity *entities[ENTITIES_MAX_AMOUNT];
+int ENTITY_COUNT;
 
 int main()
 {
@@ -84,16 +92,20 @@ int main()
     desenha_borda(X_MIN, Y_MIN, X_MAX, Y_MAX);
 
     entity *player = initialize_player();
-    draw_prop( player );
+    ENTITY_COUNT = 0;
 
-    fgets();
+    draw_prop( player->render );
 
-    move_prop(player, 1);
-
+    game_loop( player );
 
     return 0;
 }
 
+
+
+/*  RENDERS  -----------------------------------------------------
+
+*/
 void desenha_borda(int x_min, int y_min, int x_max, int y_max) {
 /*  x1, y1 : canto superior esquerdo da tela.
     x2, y2 : canto inferior direito da tela.
@@ -137,13 +149,16 @@ void clean_previous_pos(render_data *obj) {
 
 void draw_prop(render_data *obj) {
 
-    clean_previous_pos( obj );
 
     gotoxy( obj->pos->x, obj->pos->y );
 
     for( int i = 0; i < obj->height; i++) {
         gotoxy( obj->pos->x, (obj->pos->y + i) );
         for( int j = 0; j < obj->width; j++) {
+
+            // TODO
+            // Desenhar o background caso char seja vazio
+
             putch( obj->content[i][j] );
         }
     }
@@ -152,77 +167,9 @@ void draw_prop(render_data *obj) {
 }
 
 
-render_data *create_render_data(
-                    coordinates *pos,
-                    int height,
-                    int width,
-                    char *content[RENDERED_OBJECT_MAX_HEIGHT] ) {
+/*  COLISSION  ----------------------------------------------------
 
-    render_data *r = malloc(sizeof(render_data));
-    if (r == NULL) {
-        return;
-    }
-
-    // Initialize previous_pos to 0;
-    coordinates *previous_pos = malloc(sizeof(coordinates));
-    if (previous_pos == NULL) {
-        return;
-    }
-    previous_pos->x = 0;
-    previous_pos->y = 0;
-    r->previous_pos = previous_pos;
-
-    r->pos = pos;
-    r->height = height;
-    r->width = width;
-
-    for (int i = 0; i < height; i++ ) {
-        r->content[i] = content[i];
-    }
-
-    return r;
-}
-
-void update_pos(entity *en, coordinates *new_pos) {
-    render_data *r = en->render;
-
-    free(r->previous_pos);
-
-    r->previous_pos = r->pos;
-    r->pos = new_pos;
-
-    return;
-}
-
-coordinates *get_new_pos(entity *en, int direction) {
-
-    coordinates *pos = malloc(sizeof(pos));
-
-    if (pos == NULL) {
-        return;
-    }
-
-    switch( direction ) {
-        case 0:
-        pos->y -= en->physics->y_speed;
-        break;
-
-        case 1:
-        pos->x += en->physics->x_speed;
-        break;
-
-        case 2:
-        pos->y += en->physics->y_speed;
-        break;
-
-        case 3:
-        pos->y -= en->physics->x_speed;
-        break;
-    }
-
-    return pos;
-}
-
+*/
 bool is_a_and_b_colliding_in_one_axis(int a, int a_length, int b, int b_length) {
     return !(b < (a + a_length) || (b + b_length) < a);
 }
@@ -242,21 +189,23 @@ bool is_a_and_b_colliding(entity *a, entity *b) {
                                          r_b->height));
 }
 
-bool is_out_of_boundary(entity *en) {
-    render_data *r = en->render;
+bool is_out_of_boundary( entity *en ) {
+    coordinates *pos = en->render->pos;
+    int width = en->render->width;
+    int height = en->render->height;
 
-    return !(
-            r->pos->y <= Y_MIN ||
-            r->pos->x >= X_MAX ||
-            r->pos->y >= Y_MAX ||
-            r->pos->x <= X_MIN
-            );
+    bool a = pos->y            <= Y_MIN;
+    bool b = (pos->x + width)  >= X_MAX;
+    bool c = (pos->y + height) >= Y_MAX;
+    bool d = pos->x            <= X_MIN;
+
+    return ( a || b || c || d );
 }
 
 bool is_enemy_colliding( entity *en ) {
     // Requires entity list <entities>
 
-    for( int i = 0; i < ENTITIES_MAX_AMOUNT; i++) {
+    for( int i = 0; i < ENTITY_COUNT; i++) {
         if( entities[i]->is_active ) {
             if( is_a_and_b_colliding( en, entities[i] ) ) {
                 return true;
@@ -268,40 +217,73 @@ bool is_enemy_colliding( entity *en ) {
 }
 
 int is_move_allowed(entity *en, coordinates *goal_pos) {
+    render_data *render = create_render_data(goal_pos,
+                                            en->render->height,
+                                            en->render->width,
+                                            en->render->content);
+    physics_data *physics = en->physics;
+    bool is_active = en->is_active;
+
+    entity *tmp = pack_entity(render,
+                              physics,
+                              is_active);
+
     // 1 - Hit the border
-    if (is_out_of_boundary( en ))
+    if (is_out_of_boundary( tmp )) {
+        free(tmp->render->previous_pos);
+        free(tmp->render);
+        free(tmp);
         return -1;
+    }
 
     // 2 - Hit something else
-    if (is_enemy_colliding( en ))
+    if (is_enemy_colliding( tmp )) {
+        free(tmp->render->previous_pos);
+        free(tmp->render);
+        free(tmp);
         return 1;
+    }
 
     return 0;
 }
 
+
+
+/*  MOVEMENT  -----------------------------------------------------
+
+*/
 void move_prop(entity *en, int direction) {
     /* Directions:
-    0 : up
-    1 : right
-    2 : down
-    3 : left */
+    1 : up
+    2 : right
+    3 : down
+    4 : left */
 
     // 1 - Pega nova coordinates
     coordinates *goal_pos = get_new_pos(en, direction);
 
     // 2 - Pode mover?
     int movement_code = is_move_allowed( en, goal_pos );
-    if (!movement_code) {
+    if (movement_code) {
         // Handle movement block
+        free(goal_pos);
+        return;
     }
 
     // 3 - Update position
     update_pos(en, goal_pos);
-    draw_prop( en );
+    clean_previous_pos( en->render );
+    draw_prop( en->render );
 
     return;
 }
 
+
+
+/*  CONSTRUCTORS  -------------------------------------------------
+
+*/
+// physics_data
 physics_data *create_physics_data(int x_speed,
                                  int y_speed) {
     physics_data *p = malloc(sizeof(physics_data));
@@ -314,9 +296,10 @@ physics_data *create_physics_data(int x_speed,
     return p;
 }
 
+// entity
 entity *pack_entity(render_data *render,
                     physics_data *physics,
-                    bool *is_ac) {
+                    bool is_ac) {
     entity *en = malloc(sizeof(entity));
     if (en == NULL) {
         return;
@@ -328,7 +311,89 @@ entity *pack_entity(render_data *render,
     return en;
 }
 
+// pos
+coordinates *create_pos(int x, int y) {
+    coordinates *p = malloc(sizeof(coordinates));
+    if( p == NULL ) {
+        return;
+    }
+    p->x = x;
+    p->y = y;
+}
 
+// render_data
+render_data *create_render_data(
+                    coordinates *pos,
+                    int height,
+                    int width,
+                    char *content[RENDERED_OBJECT_MAX_HEIGHT] ) {
+
+    render_data *r = malloc(sizeof(render_data));
+    if (r == NULL) {
+        return;
+    }
+
+    r->pos = pos;
+
+    // Initialize previous_pos
+    r->previous_pos = create_pos(pos->x, pos->y);
+
+    r->height = height;
+    r->width = width;
+
+    for (int i = 0; i < height; i++ ) {
+        r->content[i] = content[i];
+    }
+
+    return r;
+}
+
+// pos
+void update_pos(entity *en, coordinates *new_pos) {
+    render_data *r = en->render;
+
+    free(r->previous_pos);
+
+    r->previous_pos = r->pos;
+    r->pos = create_pos( new_pos->x, new_pos->y );
+    // Possível memory leak aqui
+
+    return;
+}
+
+//
+coordinates *get_new_pos(entity *en, int direction) {
+
+    int x = en->render->pos->x;
+    int y = en->render->pos->y;
+    coordinates *pos = create_pos( x, y);
+
+    switch( direction ) {
+        case 1:
+        pos->y -= en->physics->y_speed;
+        break;
+
+        case 2:
+        pos->x += en->physics->x_speed;
+        break;
+
+        case 3:
+        pos->y += en->physics->y_speed;
+        break;
+
+        case 4:
+        pos->x -= en->physics->x_speed;
+        break;
+    }
+
+    return pos;
+}
+
+
+
+/*  INITIALIZERS  -------------------------------------------------
+
+*/
 entity *initialize_player() {
     coordinates default_pos = {
         .x = DEFAULT_PLAYER_X,
@@ -349,9 +414,54 @@ entity *initialize_player() {
     return player;
 }
 
-/*  TODO
 
-- initialize entities list
+
+/*  CONTROLLERS  --------------------------------------------------
+
+*/
+int capture_action() {
+    if (kbhit())
+        {
+            char c = getch();
+            if ((int) c == -32)
+            {
+
+                switch(getch())
+                {
+                case ARROW_UP:
+                    return 1;
+                    break;
+                case ARROW_RIGHT:
+                    return 2;
+                    break;
+                case ARROW_DOWN:
+                    return 3;
+                    break;
+                case ARROW_LEFT:
+                    return 4;
+                    break;
+                }
+            }
+        }
+    return 0;
+}
+
+
+void game_loop( entity *player ) {
+    while( player->is_active ) {
+        int action = capture_action();
+        if(action) {
+            // Movement
+            if(action >= 1 && action <= 4)
+            move_prop( player, action );
+        }
+    }
+}
+
+/* TODO
+- hide cursor position after actions
+
+
 
 
 */
