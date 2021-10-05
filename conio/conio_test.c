@@ -21,11 +21,11 @@ int main() {
 
   /* get the info about screen */
   gettextinfo( &info );
-  
+
   /* save the cursor position */
   cursor_pos_x = info.curx;
   cursor_pos_y = info.cury;
-  
+
   /* set normal cursor */
   _setcursortype( _NORMALCURSOR );
 
@@ -75,7 +75,7 @@ int main() {
   /* test movetext */
   getch();
   movetext( 10, 9, 15, 9, 10, 12 );
-  
+
   gotoxy( 10, 15 );
   password[0] = 7;
   getpass( "Guma: ", password );
@@ -93,7 +93,7 @@ int main() {
   lowvideo();
   gotoxy( 20, 12 );
   cputs( "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" );
-  
+
 #ifdef UNICODE
   /* test unicode */
   gotoxy( 40, 15 );
