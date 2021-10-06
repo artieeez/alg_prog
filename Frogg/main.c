@@ -18,8 +18,8 @@
 #define SAPO_WIDTH 8
 #define SAPO_HEIGHT 2
 
-#define DEFAULT_PLAYER_X 10
-#define DEFAULT_PLAYER_Y 10
+#define DEFAULT_PLAYER_X 50
+#define DEFAULT_PLAYER_Y 28
 
 #define DEFAULT_PLAYER_STATUS 0
 #define DEFAULT_PLAYER_IS_ACTIVE true
@@ -31,15 +31,22 @@
 #define ENTITIES_MAX_AMOUNT 10
 
 typedef struct coordinates {
-   int x;
-   int y;
+    int x;
+    int y;
 } coordinates;
+
+typedef struct box_model {
+    coordinates *top_left;
+    coordinates *bottom_right;
+} box_model;
 
 typedef struct render_data {
     coordinates *pos;
     coordinates *previous_pos;
     int height;
     int width;
+    box_model *full_size;
+    box_model *cropped;
     char *content[RENDERED_OBJECT_MAX_HEIGHT];
 } render_data;
 
@@ -59,7 +66,7 @@ struct text_info info;
 coordinates *create_pos(int x, int y);
 coordinates *get_new_pos(entity *en, int direction);
 entity *initialize_player();
-void draw_prop(render_data *obj);
+void draw_prop(int x, int y, int width, int height, char *content[RENDERED_OBJECT_MAX_HEIGHT]);
 void desenha_borda(int x_min, int y_min, int x_max, int y_max);
 render_data *create_render_data(
                     coordinates *pos,
@@ -94,7 +101,11 @@ int main()
     entity *player = initialize_player();
     ENTITY_COUNT = 0;
 
-    draw_prop( player->render );
+    draw_prop(player->render->pos->x,
+              player->render->pos->y,
+              player->render->width,
+              player->render->height,
+              player->render->content );
 
     game_loop( player );
 
@@ -147,20 +158,20 @@ void clean_previous_pos(render_data *obj) {
 }
 
 
-void draw_prop(render_data *obj) {
+void draw_prop(int x, int y, int width, int height, char *content[RENDERED_OBJECT_MAX_HEIGHT]) {
 
+    for( int i = 0; i < height; i++) {
+        gotoxy( x, y );
 
-    gotoxy( obj->pos->x, obj->pos->y );
+        for( int j = 0; j < width; j++) {
 
-    for( int i = 0; i < obj->height; i++) {
-        gotoxy( obj->pos->x, (obj->pos->y + i) );
-        for( int j = 0; j < obj->width; j++) {
-
-            // TODO
-            // Desenhar o background caso char seja vazio
-
-            putch( obj->content[i][j] );
+            // Handle render crop at x axis when out of boundary
+            if ( x > X_MIN && x < X_MAX) {
+                putch( content[i][j] );
+            }
         }
+
+        y += 1;
     }
 
     return;
@@ -195,8 +206,8 @@ bool is_out_of_boundary( entity *en ) {
     int height = en->render->height;
 
     bool a = pos->y            <= Y_MIN;
-    bool b = (pos->x + width)  >= X_MAX;
-    bool c = (pos->y + height) >= Y_MAX;
+    bool b = (pos->x + width)  >= X_MAX + 1;
+    bool c = (pos->y + height) >= Y_MAX + 1;
     bool d = pos->x            <= X_MIN;
 
     return ( a || b || c || d );
@@ -273,7 +284,11 @@ void move_prop(entity *en, int direction) {
     // 3 - Update position
     update_pos(en, goal_pos);
     clean_previous_pos( en->render );
-    draw_prop( en->render );
+    draw_prop(en->render->pos->x,
+              en->render->pos->y,
+              en->render->width,
+              en->render->height,
+              en->render->content );
 
     return;
 }
@@ -283,6 +298,11 @@ void move_prop(entity *en, int direction) {
 /*  CONSTRUCTORS  -------------------------------------------------
 
 */
+// cropped box_model
+void calculate_box_model(entity *en) {
+    return;
+}
+
 // physics_data
 physics_data *create_physics_data(int x_speed,
                                  int y_speed) {
@@ -321,6 +341,17 @@ coordinates *create_pos(int x, int y) {
     p->y = y;
 }
 
+// box_model
+box_model *create_box_model(coordinates *top_left, coordinates *bottom_right) {
+    box_model *b = malloc(sizeof(box_model));
+    if( b == NULL ) {
+        return;
+    }
+    b->top_left = top_left;
+    b->bottom_right = bottom_right;
+    return b;
+}
+
 // render_data
 render_data *create_render_data(
                     coordinates *pos,
@@ -344,6 +375,13 @@ render_data *create_render_data(
     for (int i = 0; i < height; i++ ) {
         r->content[i] = content[i];
     }
+
+    // Box model
+    coordinates *top_left = create_pos(r->pos->x, r->pos->y);
+    coordinates *bottom_right = create_pos(r->pos->x + width,
+                                           r->pos->y + height);
+    r->full_size = create_box_model(top_left, bottom_right);
+
 
     return r;
 }
