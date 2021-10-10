@@ -1,6 +1,7 @@
 #include <conio2.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #define X_MIN 1
 #define X_MAX 120
@@ -174,6 +175,8 @@ void draw_prop(int x, int y, int width, int height, char *content[RENDERED_OBJEC
         y += 1;
     }
 
+    gotoxy( X_MAX, Y_MAX );
+
     return;
 }
 
@@ -206,7 +209,7 @@ bool is_out_of_boundary( entity *en ) {
     int height = en->render->height;
 
     bool a = pos->y            <= Y_MIN;
-    bool b = (pos->x + width)  >= X_MAX + 1;
+    bool b = (pos->x + width)  >= X_MAX + 10;
     bool c = (pos->y + height) >= Y_MAX + 1;
     bool d = pos->x            <= X_MIN;
 
@@ -461,6 +464,11 @@ int capture_action() {
     if (kbhit())
         {
             char c = getch();
+
+            if (c == 'q') {
+                return 5;
+            }
+
             if ((int) c == -32)
             {
 
@@ -492,8 +500,24 @@ void game_loop( entity *player ) {
             // Movement
             if(action >= 1 && action <= 4)
             move_prop( player, action );
+
+            // 
+            if (action == 5) {
+                player->is_active = false;
+            }
         }
     }
+
+    clrscr();
+
+    desenha_borda(X_MIN, Y_MIN, X_MAX, Y_MAX);
+
+    gotoxy(50, 15);
+
+    printf("VOCE PAROU O JOGO");
+
+    gotoxy(X_MIN, Y_MAX - 3);
+
 }
 
 /* TODO

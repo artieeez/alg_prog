@@ -1,0 +1,62 @@
+  // Prop constructor
+entity *create_prop(int prop_code) {
+    char *sapo[2] = {
+        "  (00)  ",
+        "\\^{  }^/"
+    };
+
+    char *esporte[3] = {
+        "O O",
+        "HHH>",
+        "o o"
+    };
+
+    char *sedan[2] = {
+        " o  o ",
+        "=||||]",
+        " o  o "
+    };
+
+    char *onibus[2] = {
+        "  (00)  ",
+        "\\^{  }^/"
+    };
+
+    char *content[RENDERED_OBJECT_MAX_HEIGHT];
+
+    switch (prop_code) {
+        case 1:
+            content = esporte;
+
+    }
+
+    int x_speed;
+    int y_speed;
+
+    bool is_active;
+
+    int x;
+    int y;
+    int height;
+    int width;
+
+
+
+
+    // Get prop initial pos
+
+    coordinates default_pos = {
+        .x = 10,
+        .y = 10
+    };
+
+	ARRUMAR WIDTH E HEIGHT
+
+    render_data *r = create_render_data(&default_pos, SAPO_HEIGHT, SAPO_WIDTH, esporte);
+
+    physics_data *physics = create_physics_data(DEFAULT_HORIZONTAL_SPEED, DEFAULT_VERTICAL_SPEED);
+
+    entity *prop = pack_entity(r, physics, DEFAULT_PLAYER_IS_ACTIVE);
+
+    return prop;
+}

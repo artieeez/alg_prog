@@ -1,6 +1,7 @@
 # depslib dependency file v1.0
-1633528901 source:c:\users\artur\onedrive - ufrgs\documents\alg_prog\frogg\main.c
+1633801649 source:c:\users\artur\onedrive - ufrgs\documents\alg_prog\frogg\main.c
 	<conio2.h>
 	<stdlib.h>
 	<stdbool.h>
+	<stdio.h>
 
