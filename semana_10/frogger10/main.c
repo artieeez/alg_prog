@@ -178,8 +178,8 @@ void desenha_esporte(VEICULO carro, COLORS cor) {
     short y1 = carro.envelope[0].y;
     short x2 = carro.envelope[1].x;
     short y2 = carro.envelope[1].y;
-    short width = x2 - x1;
-    short height = y2 - y1;
+    short width = x2 - x1 + 1;
+    short height = y2 - y1 + 1;
 
     char *content[3] = {
         "o o ",
@@ -241,7 +241,7 @@ void desenha_lista_veiculos(VEICULO lista_veiculos[]) {
                                               COR_VEIC);
 
         /* Reinicia posição do veículo */
-        if (!tmp_veiculo->valido) {
+        if (tmp_veiculo->valido) {
             if (tmp_envelope1->x >= X_MAX && tmp_veiculo->dir == DIR) {
                 tmp_envelope2->x -= tmp_envelope1->x - 1;
                 tmp_envelope1->x = 1;
@@ -297,6 +297,11 @@ int mata_sapo(SAPO lista_sapos[], short *indice_sapo, VEICULO lista_veiculos[]) 
             /* --  ITEM B.3  ------------------------------------------------ */
             if (*indice_sapo <= NUM_SAPO - 1) {
                 *indice_sapo += 1;
+                SAPO *novo_sapo = &lista_sapos[*indice_sapo];
+                novo_sapo->envelope[0].x = DEFAULT_PLAYER_X;
+                novo_sapo->envelope[1].x = DEFAULT_PLAYER_X + 7;
+                novo_sapo->envelope[0].y = DEFAULT_PLAYER_Y;
+                novo_sapo->envelope[1].y = DEFAULT_PLAYER_Y + 1;
                 return 1;
             } else {
                 return 2;
@@ -309,7 +314,7 @@ int mata_sapo(SAPO lista_sapos[], short *indice_sapo, VEICULO lista_veiculos[]) 
 /* --  QUESTÃO 5  ----------------------------------------------------------- */
 void inicializa_jogador(JOGADOR *jog) {
     /* --  ITEM A  ---------------------------------------------------------- */
-    jog->sapos_salvos = 0;
+    jog->sapos_salvos = 2;
     /* --  ITEM B  ---------------------------------------------------------- */
     jog->inicio_jogo = time(NULL);
     /* --  ITEM C  ---------------------------------------------------------- */
@@ -507,16 +512,17 @@ void inicializa_sapos(SAPO lista_sapos[]) {
 void get_coord_veic(COORDENADA env[], TIPO_VEICULO tipo, short x) {
     COORDENADA env1;
     COORDENADA env2;
-    short width;
+    short width, height;
     switch (tipo) {
         case ESPORTE:
             width = 4;
+            height = 3;
             break;
     }
     env1.x = x;
     env2.x = x + width - 1;
     env1.y = PISTA_1_Y;
-    env2.y = env1.y + 1;
+    env2.y = env1.y + height - 1;
     env[0] = env1;
     env[1] = env2;
     return;
@@ -533,6 +539,13 @@ void inicializa_veiculos(VEICULO lista_veiculos[], DIRECAO_MOVIMENTO dir) {
         tmp.tipo = ESPORTE;
         tmp.dir = DIR;
         tmp.tamanho = 4;
+
+        tmp.distancia = 0;
+        tmp.pista = 0;
+        tmp.valido = 1;
+        tmp.fase = 0;
+
+        lista_veiculos[i] = tmp;
     }
     return;
 }
@@ -544,6 +557,14 @@ void ativa_sapo(SAPO *s) {
     s->envelope[1].y = DEFAULT_PLAYER_Y + 1;
     s->status = ATIVO;
     return;
+}
+
+bool is_render_frame(short f) {
+    return (
+        f == 10 ||
+        f == 20 ||
+        f == 30
+    );
 }
 
 /* --  GAME LOOP  ----------------------------------------------------------- */
@@ -560,15 +581,41 @@ void game_loop(
 
     inicializa_veiculos(lista_veiculos, DIR);
 
+    int counter = 0;
     while (indice_sapo < NUM_SAPO) {
-        desenha_lista_veiculos(lista_veiculos);
+        if (counter == 30 || counter == 15) {
+            desenha_lista_veiculos(lista_veiculos);
+        }
 
+        gotoxy(X_MAX, Y_MAX);
+        //Sleep(33.33);
+        Sleep(10);
+
+
+        #if true
         int action = capture_action();
         if (action) {
             // Mover sapo
             move_sapo(&lista_sapos[indice_sapo], action);
         }
 
-        mata_sapo(lista_sapos, &indice_sapo, lista_veiculos);
-    }
+        /* Executa mata_sapo apenas nos frames onde o carro ou o sapo se move */
+        if (is_render_frame(counter) || action) {
+            mata_sapo(lista_sapos, &indice_sapo, lista_veiculos);
+        }
+        #endif
+
+        if (counter == 30) {
+            counter = 1;
+        } else {
+            counter++;
+        }
+    } // FIM DO GAME LOOP
+    gotoxy(1, Y_MAX + 1);
+
+    calcula_score(jog);
+
+    printf("Seu score final: %d\n", jog->score);
+
+    getch();
 }
