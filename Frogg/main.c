@@ -209,7 +209,7 @@ bool is_out_of_boundary( entity *en ) {
     int height = en->render->height;
 
     bool a = pos->y            <= Y_MIN;
-    bool b = (pos->x + width)  >= X_MAX + 10;
+    bool b = (pos->x + width)  >= X_MAX + 1;
     bool c = (pos->y + height) >= Y_MAX + 1;
     bool d = pos->x            <= X_MIN;
 

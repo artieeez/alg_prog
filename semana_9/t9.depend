@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1634160051 source:c:\users\artur\onedrive - ufrgs\documents\alg_prog\semana_9\main.c
+	<conio2.h>
+	<stdlib.h>
+	<stdbool.h>
+	<stdio.h>
+	<time.h>
+	<Windows.h>
+	<unistd.h>
+
