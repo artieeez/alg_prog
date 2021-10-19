@@ -332,7 +332,7 @@ void calcula_score(JOGADOR *jog) {
     /* --  ITEM B  ---------------------------------------------------------- */
     jog->tempo_jogo = time(NULL) - jog->inicio_jogo;
     /* --  ITEM C  ---------------------------------------------------------- */
-    jog->score = (1000 * jog->sapos_salvos) / jog->tempo_jogo;
+    jog->score = (10000 * jog->sapos_salvos) / jog->tempo_jogo;
     return;
 }
 
@@ -567,6 +567,31 @@ bool is_render_frame(short f) {
     );
 }
 
+void display_game_status(JOGADOR *jog, short indice_sapo) {
+    textcolor(WHITE);
+
+    gotoxy( X_MIN, Y_MIN - 2);
+    if (NUM_SAPO - indice_sapo <= 1) {
+        textcolor(RED);
+    }
+    short tempo_jogo = time(NULL) - jog->inicio_jogo;
+    float score;
+    if (tempo_jogo == 0) {
+        score = 0;
+    } else {
+        score = (float) (10000 * jog->sapos_salvos) / (float) tempo_jogo;
+    }
+    printf("Sapos vivos: %d\n", NUM_SAPO - indice_sapo);
+    gotoxy( 50, Y_MIN - 2);
+    printf("Sapos salvos: %d", jog->sapos_salvos);
+    //gotoxy( 50, Y_MIN - 1);
+    //printf("Score: %8.2f", score);
+    gotoxy( 90, Y_MIN - 2);
+    printf("Tempo de jogo: %3ds", tempo_jogo);
+
+    gotoxy( X_MAX, Y_MAX);
+}
+
 /* --  GAME LOOP  ----------------------------------------------------------- */
 void game_loop(
     JOGADOR *jog,
@@ -602,6 +627,7 @@ void game_loop(
         /* Executa mata_sapo apenas nos frames onde o carro ou o sapo se move */
         if (is_render_frame(counter) || action) {
             mata_sapo(lista_sapos, &indice_sapo, lista_veiculos);
+            display_game_status(jog, indice_sapo);
         }
         #endif
 
