@@ -23,7 +23,7 @@ João Pedro Telles Fava
 #define TAM_MAX_NOME_JOGADOR 20
 #define NUM_VEICULOS 3
 #define NUM_SAPO 6
-#define VEIC_SPEED 2
+#define VEIC_SPEED 4
 #define SAPO_SPEED_X 8
 #define SAPO_SPEED_Y 2
 #define PISTA_1_Y 10
@@ -33,7 +33,7 @@ João Pedro Telles Fava
 #define Y_MIN 3
 #define Y_MAX 28
 
-#define DEFAULT_PLAYER_X 50
+#define DEFAULT_PLAYER_X 55
 #define DEFAULT_PLAYER_Y 26
 
 #define POS_INICIAL_SAPO_X 12
@@ -127,6 +127,7 @@ void inicializa_jogador(JOGADOR *jog);
 void desenha_sapo(COORDENADA pos1, COORDENADA pos2, COLORS color);
 void inicializa_sapos(SAPO lista_sapos[]);
 void ativa_sapo(SAPO *s);
+void flush_in();
 void game_loop(
     JOGADOR *jog,
     SAPO lista_sapos[],
@@ -140,6 +141,7 @@ int main() {
     /* --  QUESTÃO 5  ------------------------------------------------------- */
     JOGADOR jog;
     inicializa_jogador(&jog);
+    
 
     /* clear the screen */
     clrscr();
@@ -287,6 +289,29 @@ int mata_sapo(SAPO lista_sapos[], short *indice_sapo, VEICULO lista_veiculos[]) 
             explosao(
                 _sapo->envelope[0],
                 _sapo->envelope[1]);
+
+            /* Codigo nao relevante a tarefa 10 */
+            Beep(400, 100);
+            Beep(100, 150);
+            gotoxy(44, 14);
+            textcolor(WHITE);
+            printf("MAIS CUIDADO NA PROXIMA, QUE TAL?");
+            gotoxy(X_MAX, Y_MAX);
+            Sleep(1500);
+            
+            gotoxy(42, 15);
+            textcolor(WHITE);
+            printf("Aperte qualquer tecla para continuar");
+            getch();
+            gotoxy(44, 14);
+            textcolor(COR_FUNDO);
+            printf("MAIS CUIDADO NA PROXIMA, QUE TAL?");
+            gotoxy(42, 15);
+            printf("Aperte qualquer tecla para continuar");
+            /* Apaga explosão */
+            desenha_sapo(_sapo->envelope[0], _sapo->envelope[1], COR_FUNDO);
+
+            
             /* --  ITEM B.2  ------------------------------------------------ */
             _sapo->status = MORTO;
             _sapo->envelope[0].x = POS_INICIAL_SAPO_X;
@@ -302,6 +327,9 @@ int mata_sapo(SAPO lista_sapos[], short *indice_sapo, VEICULO lista_veiculos[]) 
                 novo_sapo->envelope[1].x = DEFAULT_PLAYER_X + 7;
                 novo_sapo->envelope[0].y = DEFAULT_PLAYER_Y;
                 novo_sapo->envelope[1].y = DEFAULT_PLAYER_Y + 1;
+                desenha_sapo(novo_sapo->envelope[0], novo_sapo->envelope[1], COR_SAPO);
+                Beep(100, 150);
+                Beep(400, 100);
                 return 1;
             } else {
                 return 2;
@@ -582,7 +610,7 @@ void display_game_status(JOGADOR *jog, short indice_sapo) {
         score = (float) (10000 * jog->sapos_salvos) / (float) tempo_jogo;
     }
     printf("Sapos vivos: %d\n", NUM_SAPO - indice_sapo);
-    gotoxy( 50, Y_MIN - 2);
+    gotoxy( 52, Y_MIN - 2);
     printf("Sapos salvos: %d", jog->sapos_salvos);
     //gotoxy( 50, Y_MIN - 1);
     //printf("Score: %8.2f", score);
@@ -606,6 +634,9 @@ void game_loop(
 
     inicializa_veiculos(lista_veiculos, DIR);
 
+    Beep(100, 150);
+    Beep(400, 100);
+
     int counter = 0;
     while (indice_sapo < NUM_SAPO) {
         if (counter == 30 || counter == 15) {
@@ -622,6 +653,8 @@ void game_loop(
         if (action) {
             // Mover sapo
             move_sapo(&lista_sapos[indice_sapo], action);
+            Beep(500, 10);
+            Beep(2200, 5);
         }
 
         /* Executa mata_sapo apenas nos frames onde o carro ou o sapo se move */
@@ -644,4 +677,14 @@ void game_loop(
     printf("Seu score final: %d\n", jog->score);
 
     getch();
+}
+
+/* Limpa buffer de entrada */
+void flush_in()
+{
+    int ch;
+    do
+    {
+        ch = fgetc(stdin);
+    } while (ch != EOF && ch != '\n');
 }
