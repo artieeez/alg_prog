@@ -656,7 +656,6 @@ void game_loop(
             Beep(500, 10);
             Beep(2200, 5);
         }
-
         /* Executa mata_sapo apenas nos frames onde o carro ou o sapo se move */
         if (is_render_frame(counter) || action) {
             mata_sapo(lista_sapos, &indice_sapo, lista_veiculos);
