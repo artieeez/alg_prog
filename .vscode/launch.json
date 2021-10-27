@@ -9,7 +9,12 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
-      "args": [],
+      "args": [
+        "-g",
+        "${fileDirname}/*.c",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}.out"
+      ],
       "stopAtEntry": false,
       "cwd": "C:\\MinGW\\bin",
       "environment": [],
