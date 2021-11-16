@@ -1,0 +1,5 @@
+Darth Vader #2 #3 #1000 #150 
+Han Solo #5 #0 #300 #120
+Luke Skywalker #0 #3 #1200 #190 
+Chewbacca #0 #4 #1500 #450 
+R2-D2 #4 #1 #0 #50 

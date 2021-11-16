@@ -2,12 +2,65 @@
   "tasks": [
     {
       "type": "cppbuild",
-      "label": "C/C++: gcc.exe arquivo de build ativo",
+      "label": "defaultC",
       "command": "C:\\MinGW\\bin\\gcc.exe",
       "args": [
         "-fdiagnostics-color=always",
         "-g",
         "${file}",
+        "-o",
+        "${fileDirname}\\${fileBasenameNoExtension}.exe",
+        "-lconio",
+      ],
+      "options": {
+        "cwd": "C:\\MinGW\\bin"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "Tarefa gerada pelo Depurador."
+    },
+    {
+      "type": "cppbuild",
+      "label": "frogger11",
+      "command": "C:\\MinGW\\bin\\gcc.exe",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "${file}",
+        "${fileDirname}\\estruturas.c",
+        "${fileDirname}\\pdata.c",
+        "-o",
+        "${fileDirname}\\${fileBasenameNoExtension}.exe",
+        "-lconio",
+      ],
+      "options": {
+        "cwd": "C:\\MinGW\\bin"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "Tarefa gerada pelo Depurador."
+    },
+    {
+      "type": "cppbuild",
+      "label": "frogger12",
+      "command": "C:\\MinGW\\bin\\gcc.exe",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "${fileDirname}\\main.c",
+        "${fileDirname}\\estruturas.c",
+        "${fileDirname}\\pdata.c",
+        "${fileDirname}\\tarefa12.c",
         "-o",
         "${fileDirname}\\${fileBasenameNoExtension}.exe",
         "-lconio",

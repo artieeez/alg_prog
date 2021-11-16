@@ -1,10 +1,9 @@
 /*
-TAREFA 10
+TAREFA 12
 
 Feito por:
 Artur Webber de Oliveira
 João Pedro Telles Fava
-
 
 */
 
@@ -13,119 +12,16 @@ João Pedro Telles Fava
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "estruturas.h"
+#include "constants.h"
+#include "pdata.h"
+#include "tarefa12.h"
 
 #ifdef _WIN32
 #include <Windows.h>
 #else
 #include <unistd.h>
 #endif
-
-#define TAM_MAX_NOME_JOGADOR 20
-#define NUM_VEICULOS 3
-#define NUM_SAPO 6
-#define VEIC_SPEED 4
-#define SAPO_SPEED_X 8
-#define SAPO_SPEED_Y 2
-#define PISTA_1_Y 10
-
-#define X_MIN 12
-#define X_MAX 108
-#define Y_MIN 3
-#define Y_MAX 28
-
-#define DEFAULT_PLAYER_X 55
-#define DEFAULT_PLAYER_Y 26
-
-#define POS_INICIAL_SAPO_X 12
-#define POS_INICIAL_SAPO_Y 27
-
-typedef enum
-// constantes dos valores das teclas.
-{
-    ESPECIAL = -32,
-    SETA_ESQ = 75,
-    SETA_DIR = 77,
-    SETA_CIMA = 72,
-    SETA_BAIXO = 80,
-    ENTER = 13,
-    ESC = 27
-} TECLAS;
-
-typedef enum
-// constantes com o id de cada entidade do jogo
-{
-    COR_VEIC = RED,
-    COR_SAPO = GREEN,
-    COR_FUNDO = BLACK,
-} CORES;
-#define QNT_TIPOS_VEIC 3
-
-typedef enum
-// constantes com o id de cada entidade do jogo
-{
-    ESPORTE = 0,
-    SEDAN = 1,
-    ONIBUS = 2,
-} TIPO_VEICULO;
-#define QNT_TIPOS_VEIC 3
-
-typedef enum {
-    ESPERA = 1,
-    ATIVO = 2,
-    SALVO = 3,
-    MORTO = 4
-} STATUS_SAPO;
-
-typedef enum {
-    CIMA = 1,
-    BAIXO = 2,
-    ESQ = 3,
-    DIR = 4
-} DIRECAO_MOVIMENTO;
-
-typedef struct
-{
-    int x;
-    int y;
-} COORDENADA;
-
-typedef struct
-{
-    char nome[TAM_MAX_NOME_JOGADOR];
-    int sapos_salvos;
-    time_t inicio_jogo;
-    int tempo_jogo;
-    int score;
-} JOGADOR;
-
-typedef struct
-{
-    COORDENADA envelope[2];
-    STATUS_SAPO status;
-    COLORS cor;
-    DIRECAO_MOVIMENTO dir;
-    int fase;
-} SAPO;
-
-typedef struct
-{
-    COORDENADA envelope[2];
-    int tamanho;
-    TIPO_VEICULO tipo;
-    int distancia;
-    DIRECAO_MOVIMENTO dir;
-    int pista;
-    short valido;
-    int fase;
-} VEICULO;
-
-typedef struct
-{
-    short indice_sapo;
-    JOGADOR jogador;
-    VEICULO lista_veiculos[NUM_VEICULOS];
-    SAPO lista_sapos[NUM_SAPO];
-} ESTADO;
 
 /* Prototipos */
 void desenha_borda(int x_min, int y_min, int x_max, int y_max);
@@ -140,8 +36,6 @@ void game_loop(
     JOGADOR *jog,
     SAPO lista_sapos[],
     VEICULO lista_veiculos[]);
-void salva_jogo(ESTADO estado);
-int le_jogo_salvo(ESTADO *estado, char nome[]);
 void pausa(ESTADO *estado);
 void instancia_jogo(
     ESTADO estado,
@@ -152,6 +46,14 @@ void instancia_jogo(
 void desenha_lista_veiculos(VEICULO lista_veiculos[], bool apagar);
 
 int main() {
+    FILE *arq;
+    JOGADOR lista_jogadores[5] = {0};
+    /* AbreArqJog(arq); */
+    LeArqTexto(arq, lista_jogadores);
+    getch();
+
+
+
     VEICULO lista_veiculos[NUM_VEICULOS];
     SAPO lista_sapos[NUM_SAPO];
     inicializa_sapos(lista_sapos);
@@ -170,7 +72,6 @@ int main() {
         lista_sapos,
         lista_veiculos);
 
-    getch();
     return 0;
 }
 
@@ -763,60 +664,6 @@ void pausa(ESTADO *estado) {
     gotoxy(1, Y_MAX + 1);
     printf("Digite o seu nome: ");
     scanf(" %s", &estado->jogador.nome);
-}
-
-void salva_jogo(ESTADO estado) {
-    char nome[TAM_MAX_NOME_JOGADOR] = {0};
-    strcpy(nome, estado.jogador.nome);
-    strcat(nome,".bin");
-
-    FILE *f_estado = fopen(nome, "wb");
-    if (f_estado == NULL) {
-        fclose(f_estado);
-        printf("Erro na escrita");
-        getchar();
-        return;  // ERRO
-    }
-    if (fwrite(&estado, sizeof(ESTADO), 1, f_estado) != 1) {
-        fclose(f_estado);
-        return;  // ERRO
-    }
-    fclose(f_estado);
-    return;
-}
-
-int le_jogo_salvo(ESTADO *estado, char nome[]) {
-    char _nome[TAM_MAX_NOME_JOGADOR] = {0};
-    strcpy(_nome,nome);
-    strcat(_nome,".bin");
-
-    FILE *f_estado;
-    f_estado = fopen(_nome, "rb");
-    ESTADO buffer;
-
-    if (f_estado == NULL) {
-        fclose(f_estado);
-        printf(
-            "Erro ao carregar.\n"
-            "Aperte para continuar");
-        getchar();
-        return 0;  // ERRO
-    }
-
-    if (fread(&buffer, sizeof(ESTADO), 1, f_estado) != 1) {
-        if (!feof(f_estado)) {
-            fclose(f_estado);
-            printf(
-                "Erro ao carregar.\n"
-                "Aperte para continuar");
-            getchar();
-            return 0;  // ERRO
-        }
-    }
-    *estado = buffer;
-    fclose(f_estado);
-
-    return 1;
 }
 
 void instancia_jogo(
