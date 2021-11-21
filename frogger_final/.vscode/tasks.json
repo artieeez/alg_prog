@@ -1,0 +1,62 @@
+{
+  "tasks": [
+    {
+      "type": "cppbuild",
+      "label": "defaultC",
+      "command": "C:\\MinGW\\bin\\gcc.exe",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "${file}",
+        "-o",
+        "${fileDirname}\\${fileBasenameNoExtension}.exe",
+        "-lconio",
+      ],
+      "options": {
+        "cwd": "C:\\MinGW\\bin"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "Tarefa gerada pelo Depurador."
+    },
+    {
+      "type": "cppbuild",
+      "label": "frogger_compile",
+      "command": "C:\\MinGW\\bin\\gcc.exe",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "${fileDirname}\\main.c",
+        "${fileDirname}\\persistent_data\\progress.c",
+        "${fileDirname}\\render\\render.c",
+        "${fileDirname}\\models\\models.c",
+        "${fileDirname}\\models\\initializers.c",
+        "${fileDirname}\\colission\\main.c",
+        "${fileDirname}\\controllers\\vehicles.c",
+        "${fileDirname}\\controllers\\player.c",
+        "${fileDirname}\\controllers\\frog.c",
+        "${fileDirname}\\controllers\\game_loop.c",
+        "-o",
+        "${fileDirname}\\${fileBasenameNoExtension}.exe",
+        "-lconio",
+      ],
+      "options": {
+        "cwd": "C:\\MinGW\\bin"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "Tarefa gerada pelo Depurador."
+    },
+  ],
+  "version": "2.0.0"
+}

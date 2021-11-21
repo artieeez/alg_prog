@@ -1,0 +1,46 @@
+# depslib dependency file v1.0
+1637091354 source:c:\users\artur\onedrive\documents\alg_prog\semana_12\teste\estruturas.c
+	<conio2.h>
+	<time.h>
+	"constants.h"
+
+1637091354 c:\users\artur\onedrive\documents\alg_prog\semana_12\teste\constants.h
+
+1637091354 source:c:\users\artur\onedrive\documents\alg_prog\semana_12\teste\main.c
+	<conio2.h>
+	<stdbool.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	"estruturas.h"
+	"constants.h"
+	"pdata.h"
+	"tarefa12.h"
+	<Windows.h>
+	<unistd.h>
+
+1637091354 c:\users\artur\onedrive\documents\alg_prog\semana_12\teste\estruturas.h
+	<conio2.h>
+	<stdbool.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	"constants.h"
+	<Windows.h>
+	<unistd.h>
+
+1637091354 c:\users\artur\onedrive\documents\alg_prog\semana_12\teste\pdata.h
+	"estruturas.h"
+
+1637091354 c:\users\artur\onedrive\documents\alg_prog\semana_12\teste\tarefa12.h
+	"estruturas.h"
+
+1637091354 source:c:\users\artur\onedrive\documents\alg_prog\semana_12\teste\pdata.c
+	"estruturas.h"
+
+1637091354 source:c:\users\artur\onedrive\documents\alg_prog\semana_12\teste\tarefa12.c
+	<conio2.h>
+	<time.h>
+	"constants.h"
+	"estruturas.h"
+

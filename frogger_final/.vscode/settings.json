@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "time.h": "c",
+        "random": "c",
+        "estruturas.h": "c",
+        "windows.h": "c",
+        "constants.h": "c",
+        "pdata.h": "c",
+        "models.h": "c",
+        "render.h": "c",
+        "stdbool.h": "c",
+        "frog.h": "c",
+        "game_loop.h": "c",
+        "vehicles.h": "c",
+        "initializers.h": "c"
+    },
+    "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 0}"
+}
