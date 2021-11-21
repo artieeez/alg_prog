@@ -57,6 +57,7 @@ typedef struct
     JOGADOR jogador;
     VEICULO lista_veiculos[NUM_VEICULOS];
     SAPO lista_sapos[NUM_SAPO];
+    STATUS_JOGO status;
 } ESTADO;
 
 #endif

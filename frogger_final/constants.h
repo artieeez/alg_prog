@@ -56,6 +56,13 @@ typedef enum {
 } STATUS_SAPO;
 
 typedef enum {
+    RUNNING = 1,
+    LOOSE = 2,
+    HALT = 3,
+    WIN = 4
+} STATUS_JOGO;
+
+typedef enum {
     CIMA = 1,
     BAIXO = 2,
     ESQ = 3,

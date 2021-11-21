@@ -42,13 +42,9 @@ void inicializa_veiculos(VEICULO lista_veiculos[], DIRECAO_MOVIMENTO dir) {
 }
 
 void inicializa_jogador(JOGADOR *jog) {
-    /* --  ITEM A  ---------------------------------------------------------- */
-    jog->sapos_salvos = 2;
-    /* --  ITEM B  ---------------------------------------------------------- */
+    jog->sapos_salvos = 0;
     jog->inicio_jogo = time(NULL);
-    /* --  ITEM C  ---------------------------------------------------------- */
     jog->tempo_jogo = 0;
-    /* --  ITEM D  ---------------------------------------------------------- */
     jog->score = 0;
 
     for(int i = 0; i < TAM_MAX_NOME_JOGADOR; i++) {

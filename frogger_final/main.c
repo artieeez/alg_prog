@@ -20,7 +20,6 @@ int main(void) {
     JOGADOR jog;
 
     /* Inicializacoes */
-    inicializa_sapos(lista_sapos);
     inicializa_jogador(&jog);
 
     /* clear the screen */

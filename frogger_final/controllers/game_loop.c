@@ -1,12 +1,18 @@
 #include <conio2.h>
+
 #include "../constants.h"
-#include "../models/headers/models.h"
 #include "../models/headers/initializers.h"
-#include "../render/render.h"
+#include "../models/headers/models.h"
 #include "../persistent_data/headers/progress.h"
+#include "../render/render.h"
 #include "headers/frog.h"
-#include "headers/vehicles.h"
 #include "headers/player.h"
+#include "headers/vehicles.h"
+
+void handleAction(
+    int action,
+    bool *halt,
+    ESTADO *estado);
 
 void display_game_status(JOGADOR *jog, short indice_sapo) {
     textcolor(WHITE);
@@ -75,20 +81,23 @@ void game_loop(
     SAPO lista_sapos[],
     VEICULO lista_veiculos[]) {
     short indice_sapo = 0;
-    ativa_sapo(&lista_sapos[indice_sapo]);
-    desenha_sapo(
-        lista_sapos[indice_sapo].envelope[0],
-        lista_sapos[indice_sapo].envelope[1],
-        lista_sapos[indice_sapo].cor);
-
-    inicializa_veiculos(lista_veiculos, DIR);
 
     ESTADO estado = {
+        .status = RUNNING,
         .indice_sapo = indice_sapo,
         .jogador = *jog,
         .lista_sapos = *lista_sapos,
         .lista_veiculos = *lista_veiculos,
     };
+
+    inicializa_veiculos(estado.lista_veiculos, DIR);
+    inicializa_sapos(estado.lista_sapos);
+
+    ativa_sapo(&estado.lista_sapos[indice_sapo]);
+    desenha_sapo(
+        estado.lista_sapos[indice_sapo].envelope[0],
+        estado.lista_sapos[indice_sapo].envelope[1],
+        estado.lista_sapos[indice_sapo].cor);
 
     Beep(100, 150);
     Beep(400, 100);
@@ -96,71 +105,34 @@ void game_loop(
     int counter = 0;
     bool halt = false;
     while (indice_sapo < NUM_SAPO && !halt) {
+        /* 1 - Desenha veiculos nos frames determinados ------------------------------ */
         if (counter == 30 || counter == 15) {
-            desenha_lista_veiculos(lista_veiculos, false);
+            desenha_lista_veiculos(estado.lista_veiculos, false);
         }
 
+        /* Impede que cursor fique piscando no meio da tela */
         gotoxy(X_MAX, Y_MAX);
         //Sleep(33.33);
         Sleep(10);
+        #if true
 
-#if true
+        /* 2 - Captura acao do usuario ----------------------------------------------- */
         int action = capture_action();
         if (action) {
-            switch (action) {
-                case 6: {
-                    ESTADO est = {
-                        .indice_sapo = indice_sapo,
-                        .jogador = *jog,
-                        .lista_sapos = *lista_sapos,
-                        .lista_veiculos = *lista_veiculos,
-                    };
-
-                    for (int i = 0; i < NUM_SAPO; i++) {
-                        est.lista_sapos[i] = lista_sapos[i];
-                    }
-                    for (int i = 0; i < NUM_VEICULOS; i++) {
-                        est.lista_veiculos[i] = lista_veiculos[i];
-                    }
-
-                    pausa(&est);
-                    salva_jogo(est);
-                    halt = true;
-                }
-
-                break;
-                case 7: {
-                    pausa(&estado);
-                    desenha_lista_veiculos(lista_veiculos, true);
-                    desenha_sapo(
-                        lista_sapos[indice_sapo].envelope[0],
-                        lista_sapos[indice_sapo].envelope[1], COR_FUNDO);
-                    le_jogo_salvo(&estado, estado.jogador.nome);
-                    instancia_jogo(
-                        estado,
-                        lista_sapos,
-                        lista_veiculos,
-                        jog,
-                        &indice_sapo);
-                    desenha_sapo(
-                        lista_sapos[indice_sapo].envelope[0],
-                        lista_sapos[indice_sapo].envelope[1],
-                        lista_sapos[indice_sapo].cor);
-                } break;
-                default:
-                    // Mover sapo
-                    move_sapo(&lista_sapos[indice_sapo], action);
-                    Beep(500, 10);
-                    Beep(2200, 5);
-                    break;
-            }
+            handleAction(action,
+                         &halt,
+                         &estado);
         }
+
         /* Executa mata_sapo apenas nos frames onde o carro ou o sapo se move */
         if (is_render_frame(counter) || action) {
-            mata_sapo(lista_sapos, &indice_sapo, lista_veiculos);
-            display_game_status(jog, indice_sapo);
+            mata_sapo(estado.lista_sapos, &estado.indice_sapo, estado.lista_veiculos);
+            display_game_status(&estado.jogador, estado.indice_sapo);
+
+            /* Verifica se sapo foi salvo */
+            salva_sapo(&estado);
         }
-#endif
+        #endif
 
         if (counter == 30) {
             counter = 1;
@@ -174,5 +146,44 @@ void game_loop(
         calcula_score(jog);
         printf("Seu score final: %d\n", jog->score);
         getch();
+    }
+}
+
+void handleAction(
+    int action,
+    bool *halt,
+    ESTADO *estado) {
+    switch (action) {
+        case 6: {
+            pausa(estado);
+            salva_jogo(*estado);
+            *halt = true;
+        }
+
+        break;
+        case 7: {
+            pausa(estado);
+            desenha_lista_veiculos(estado->lista_veiculos, true);
+            desenha_sapo(
+                estado->lista_sapos[estado->indice_sapo].envelope[0],
+                estado->lista_sapos[estado->indice_sapo].envelope[1], COR_FUNDO);
+            le_jogo_salvo(estado, estado->jogador.nome);
+            instancia_jogo(
+                *estado,
+                estado->lista_sapos,
+                estado->lista_veiculos,
+                &estado->jogador,
+                &estado->indice_sapo);
+            desenha_sapo(
+                estado->lista_sapos[estado->indice_sapo].envelope[0],
+                estado->lista_sapos[estado->indice_sapo].envelope[1],
+                estado->lista_sapos[estado->indice_sapo].cor);
+        } break;
+        default:
+            // Mover sapo
+            move_sapo(&estado->lista_sapos[estado->indice_sapo], action);
+            Beep(500, 10);
+            Beep(2200, 5);
+            break;
     }
 }

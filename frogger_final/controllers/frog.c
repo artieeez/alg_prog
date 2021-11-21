@@ -1,5 +1,6 @@
-#include "../models/headers/models.h"
 #include "../colission/main.h"
+#include "../constants.h"
+#include "../models/headers/models.h"
 #include "../render/render.h"
 
 void move_sapo(SAPO *s, DIRECAO_MOVIMENTO dir) {
@@ -75,14 +76,12 @@ int mata_sapo(SAPO lista_sapos[], short *indice_sapo, VEICULO lista_veiculos[]) 
             /* Apaga explosão */
             desenha_sapo(_sapo->envelope[0], _sapo->envelope[1], COR_FUNDO);
 
-            /* --  ITEM B.2  ------------------------------------------------ */
             _sapo->status = MORTO;
             _sapo->envelope[0].x = POS_INICIAL_SAPO_X;
             _sapo->envelope[1].x = POS_INICIAL_SAPO_X + 7;
             _sapo->envelope[0].y = POS_INICIAL_SAPO_Y;
             _sapo->envelope[1].y = POS_INICIAL_SAPO_Y + 1;
 
-            /* --  ITEM B.3  ------------------------------------------------ */
             if (*indice_sapo <= NUM_SAPO - 1) {
                 *indice_sapo += 1;
                 SAPO *novo_sapo = &lista_sapos[*indice_sapo];
@@ -100,4 +99,59 @@ int mata_sapo(SAPO lista_sapos[], short *indice_sapo, VEICULO lista_veiculos[]) 
         }
     }
     return 0;
+}
+
+void move_sapo_borda(SAPO *sapo, int indice) {
+    sapo->envelope[0].x = X_MAX + 2;
+    sapo->envelope[1].x = X_MAX + 9;
+
+    sapo->envelope[0].y = Y_MIN + (2 * indice) + indice - 1;
+    sapo->envelope[1].y = Y_MIN + (2 * indice) + indice;
+
+    desenha_sapo(sapo->envelope[0], sapo->envelope[1], WHITE);
+}
+
+void salva_sapo(ESTADO *estado) {
+    bool colide_com_borda_superiora = false;
+    SAPO *sapo = &estado->lista_sapos[estado->indice_sapo];
+
+    colide_com_borda_superiora = is_a_and_b_colliding_in_one_axis(
+        sapo->envelope[0].y,
+        2,
+        0,
+        Y_MIN + 2);
+
+    if (colide_com_borda_superiora) {
+        // Atualiza posição do sapo
+        desenha_sapo(sapo->envelope[0], sapo->envelope[1], COR_FUNDO);
+        move_sapo_borda(sapo, estado->indice_sapo + 1);
+
+        /* Incrementa sapos salvos */
+        estado->jogador.sapos_salvos++;
+
+        /* Atualiza status sapo */
+        sapo->status = SALVO;
+
+        // Atualiza indice sapo
+        estado->indice_sapo++;
+
+        // SE último sapo
+        if (estado->indice_sapo >= NUM_SAPO) {
+            estado->status = WIN;
+            return;
+        }
+
+        SAPO *novo_sapo = &estado->lista_sapos[estado->indice_sapo];
+        novo_sapo->status = ATIVO;
+        novo_sapo->envelope[0].x = DEFAULT_PLAYER_X;
+        novo_sapo->envelope[1].x = DEFAULT_PLAYER_X + 7;
+        novo_sapo->envelope[0].y = DEFAULT_PLAYER_Y;
+        novo_sapo->envelope[1].y = DEFAULT_PLAYER_Y + 1;
+        desenha_sapo(novo_sapo->envelope[0], novo_sapo->envelope[1], COR_SAPO);
+        Beep(100, 150);
+        Beep(400, 100);
+
+        return;
+    }
+    return;
 }

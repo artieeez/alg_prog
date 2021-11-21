@@ -74,11 +74,14 @@ void desenha_sapo(COORDENADA pos1, COORDENADA pos2, COLORS color) {
 
         for (int j = 0; j < width; j++) {
             // Handle render crop at x axis when out of boundary
-            if (((x1 + j) - 1) > X_MIN && (x1 + j) < X_MAX) {
+            /* impede que sapo seja desenhado fora da borda
+             if (((x1 + j) - 1) > X_MIN && (x1 + j) < X_MAX) {
                 putch(content[i][j]);
             } else {
                 gotoxy(x1 + j, y1);
-            }
+            } */
+
+            putch(content[i][j]);
         }
         y1 += 1;
     }

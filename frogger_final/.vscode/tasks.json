@@ -34,7 +34,6 @@
         "${fileDirname}\\main.c",
         "${fileDirname}\\persistent_data\\progress.c",
         "${fileDirname}\\render\\render.c",
-        "${fileDirname}\\models\\models.c",
         "${fileDirname}\\models\\initializers.c",
         "${fileDirname}\\colission\\main.c",
         "${fileDirname}\\controllers\\vehicles.c",
