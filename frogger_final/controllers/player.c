@@ -43,6 +43,7 @@ void pausa(ESTADO *estado) {
 }
 
 void calcula_score(JOGADOR *jog) {
+    gotoxy(1, Y_MAX + 1);
     /* --  ITEM A  ---------------------------------------------------------- */
     printf("Digite o seu nome: ");
     scanf(" %s", jog->nome);

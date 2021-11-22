@@ -3,7 +3,7 @@
 
 #define TAM_MAX_NOME_JOGADOR 20
 #define NUM_VEICULOS 3
-#define NUM_SAPO 6
+#define NUM_SAPO 1
 #define VEIC_SPEED 4
 #define SAPO_SPEED_X 8
 #define SAPO_SPEED_Y 2
@@ -39,6 +39,13 @@ typedef enum
     COR_SAPO = GREEN,
     COR_FUNDO = BLACK,
 } CORES;
+
+typedef enum
+// constantes com o id de cada entidade do jogo
+{
+    FASE_1 = 10,
+    FASE_2 = 5,
+} GAME_SPEED;
 
 typedef enum
 // constantes com o id de cada entidade do jogo

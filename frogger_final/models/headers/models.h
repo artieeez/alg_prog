@@ -53,6 +53,8 @@ typedef struct
 
 typedef struct
 {
+    GAME_SPEED game_speed;
+    int fase;
     short indice_sapo;
     JOGADOR jogador;
     VEICULO lista_veiculos[NUM_VEICULOS];

@@ -11,8 +11,8 @@
 
 void handleAction(
     int action,
-    bool *halt,
     ESTADO *estado);
+void vence_jogo(ESTADO *estado);
 
 void display_game_status(JOGADOR *jog, short indice_sapo) {
     textcolor(WHITE);
@@ -83,6 +83,8 @@ void game_loop(
     short indice_sapo = 0;
 
     ESTADO estado = {
+        .game_speed = FASE_1,
+        .fase = 1,
         .status = RUNNING,
         .indice_sapo = indice_sapo,
         .jogador = *jog,
@@ -103,61 +105,69 @@ void game_loop(
     Beep(400, 100);
 
     int counter = 0;
-    bool halt = false;
-    while (indice_sapo < NUM_SAPO && !halt) {
-        /* 1 - Desenha veiculos nos frames determinados ------------------------------ */
-        if (counter == 30 || counter == 15) {
-            desenha_lista_veiculos(estado.lista_veiculos, false);
+    while (estado.status != HALT) {
+        /* fase 2 */
+        if(estado.status == WIN) {
+            estado.game_speed = FASE_2;
+            estado.indice_sapo = 0;
+            estado.jogador.sapos_salvos = 0;
+            estado.jogador.score = 0;
         }
 
-        /* Impede que cursor fique piscando no meio da tela */
-        gotoxy(X_MAX, Y_MAX);
-        //Sleep(33.33);
-        Sleep(10);
-        #if true
 
-        /* 2 - Captura acao do usuario ----------------------------------------------- */
-        int action = capture_action();
-        if (action) {
-            handleAction(action,
-                         &halt,
-                         &estado);
+        while (indice_sapo < NUM_SAPO && (estado.status == RUNNING)) {
+            /* 1 - Desenha veiculos nos frames determinados ------------------------------ */
+            if (counter == 30 || counter == 15) {
+                desenha_lista_veiculos(estado.lista_veiculos, false);
+            }
+
+            /* Impede que cursor fique piscando no meio da tela */
+            gotoxy(X_MAX, Y_MAX);
+            Sleep(estado.game_speed);
+
+            /* 2 - Captura acao do usuario ----------------------------------------------- */
+            int action = capture_action();
+            if (action) {
+                handleAction(action,
+                             &estado);
+            }
+
+            /* Executa mata_sapo apenas nos frames onde o carro ou o sapo se move */
+            if (is_render_frame(counter) || action) {
+                mata_sapo(estado.lista_sapos, &estado.indice_sapo, estado.lista_veiculos);
+
+                /* Verifica se sapo foi salvo */
+                salva_sapo(&estado);
+
+                display_game_status(&estado.jogador, estado.indice_sapo);
+            }
+
+            if (counter == 30) {
+                counter = 1;
+            } else {
+                counter++;
+            }
+
+        }  // FIM LOOP DA FASE
+        if (estado.status == WIN || estado.status == LOOSE) {
+            calcula_score(&estado.jogador);
+
+            /* passa fase */
+            estado.fase++;
+
+            vence_jogo(&estado);
         }
-
-        /* Executa mata_sapo apenas nos frames onde o carro ou o sapo se move */
-        if (is_render_frame(counter) || action) {
-            mata_sapo(estado.lista_sapos, &estado.indice_sapo, estado.lista_veiculos);
-            display_game_status(&estado.jogador, estado.indice_sapo);
-
-            /* Verifica se sapo foi salvo */
-            salva_sapo(&estado);
-        }
-        #endif
-
-        if (counter == 30) {
-            counter = 1;
-        } else {
-            counter++;
-        }
-    }  // FIM DO GAME LOOP
-    gotoxy(1, Y_MAX + 1);
-
-    if (!halt) {
-        calcula_score(jog);
-        printf("Seu score final: %d\n", jog->score);
-        getch();
-    }
+    }  // FIM DO GAME_LOOP
 }
 
 void handleAction(
     int action,
-    bool *halt,
     ESTADO *estado) {
     switch (action) {
         case 6: {
             pausa(estado);
             salva_jogo(*estado);
-            *halt = true;
+            estado->status = HALT;
         }
 
         break;
@@ -186,4 +196,26 @@ void handleAction(
             Beep(2200, 5);
             break;
     }
+}
+
+void vence_jogo(ESTADO *estado) {
+    textcolor(WHITE);
+    gotoxy(54, 14);
+    printf("VOCE VENCEU\n");
+    gotoxy(50, 15);
+    printf("Seu score final: %d\n", estado->jogador.score);
+    gotoxy(X_MAX, Y_MAX);
+    Sleep(1500);
+
+    gotoxy(42, 16);
+    textcolor(WHITE);
+    printf("Aperte qualquer tecla para continuar");
+    getch();
+    gotoxy(44, 14);
+    textcolor(COR_FUNDO);
+    printf("MAIS CUIDADO NA PROXIMA, QUE TAL?");
+    gotoxy(42, 15);
+    printf("Aperte qualquer tecla para continuar");
+
+    return;
 }

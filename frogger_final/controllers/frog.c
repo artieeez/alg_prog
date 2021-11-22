@@ -55,7 +55,6 @@ int mata_sapo(SAPO lista_sapos[], short *indice_sapo, VEICULO lista_veiculos[]) 
                 _sapo->envelope[0],
                 _sapo->envelope[1]);
 
-            /* Codigo nao relevante a tarefa 10 */
             Beep(400, 100);
             Beep(100, 150);
             gotoxy(44, 14);
