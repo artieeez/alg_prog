@@ -42,7 +42,6 @@ typedef struct
 typedef struct
 {
     COORDENADA envelope[2];
-    int tamanho;
     TIPO_VEICULO tipo;
     int distancia;
     DIRECAO_MOVIMENTO dir;

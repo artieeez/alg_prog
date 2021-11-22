@@ -1,4 +1,5 @@
 #include "headers/models.h"
+/* . */
 #include "../constants.h"
 
 void get_coord_veic(COORDENADA env[], TIPO_VEICULO tipo, short x, PISTA pista) {
@@ -8,6 +9,14 @@ void get_coord_veic(COORDENADA env[], TIPO_VEICULO tipo, short x, PISTA pista) {
     switch (tipo) {
         case ESPORTE:
             width = 4;
+            height = 3;
+            break;
+        case SEDAN:
+            width = 7;
+            height = 3;
+            break;
+        case ONIBUS:
+            width = 10;
             height = 3;
             break;
     }
@@ -62,17 +71,23 @@ void inicializa_veiculos(ESTADO estado, VEICULO lista_veiculos[], DIRECAO_MOVIME
             break;
         case PISTA_4:
             posicao[0] = 3;
-            posicao[1] = 16;
-            posicao[2] = 32;
+            posicao[1] = 40;
+            posicao[2] = 95;
             break;
     }
 
     for (int i = 0; i < NUM_VEICULOS; i++) {
         VEICULO tmp;
-        get_coord_veic(tmp.envelope, tipo, posicao[i], pista);
-        tmp.tipo = ESPORTE;
+        if (i == 0) {
+            tmp.tipo = SEDAN;
+        } else if (i == 1) {
+            tmp.tipo = ESPORTE;
+        } else {
+            tmp.tipo = ONIBUS;
+        }
+        get_coord_veic(tmp.envelope, tmp.tipo, posicao[i], pista);
+
         tmp.dir = dir;
-        tmp.tamanho = 4;
 
         tmp.distancia = 0;
         tmp.pista = pista;

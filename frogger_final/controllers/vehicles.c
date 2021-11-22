@@ -11,8 +11,14 @@ short desenha_veiculo(VEICULO carro, COLORS cor) {
                                                       carro.envelope[1]);
 
     switch (carro.tipo) {
+        case SEDAN:
+            desenha_sedan(carro, cor);
+            break;
         case ESPORTE:
             desenha_esporte(carro, cor);
+            break;
+        case ONIBUS:
+            desenha_onibus(carro, cor);
             break;
     }
 

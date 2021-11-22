@@ -107,6 +107,84 @@ void desenha_esporte(VEICULO carro, COLORS cor) {
         "HHH>",
         "o o "};
 
+    if(carro.dir == ESQ) {
+        content[0] = " o o";
+        content[1] = "<HHH";
+        content[2] = " o o";
+    }
+
+    textcolor(cor);
+
+    for (int i = 0; i < height; i++) {
+        gotoxy(x1, y1);
+
+        for (int j = 0; j < width; j++) {
+            // Handle render crop at x axis when out of boundary
+            if (((x1 + j) - 1) > X_MIN && (x1 + j) < X_MAX) {
+                putch(content[i][j]);
+            } else {
+                gotoxy(x1 + j, y1);
+            }
+        }
+        y1 += 1;
+    }
+}
+
+void desenha_sedan(VEICULO carro, COLORS cor) {
+    short x1 = carro.envelope[0].x;
+    short y1 = carro.envelope[0].y;
+    short x2 = carro.envelope[1].x;
+    short y2 = carro.envelope[1].y;
+    short width = x2 - x1 + 1;
+    short height = y2 - y1 + 1;
+
+    char *content[3] = {
+        "  o  o ",
+        "=||||||",
+        "  o  o "};
+
+    if(carro.dir == ESQ) {
+        content[0] = " o  o  ";
+        content[1] = "||||||=";
+        content[2] = " o  o  ";
+    }
+
+    textcolor(cor);
+
+    for (int i = 0; i < height; i++) {
+        gotoxy(x1, y1);
+
+        for (int j = 0; j < width; j++) {
+            // Handle render crop at x axis when out of boundary
+            if (((x1 + j) - 1) > X_MIN && (x1 + j) < X_MAX) {
+                putch(content[i][j]);
+            } else {
+                gotoxy(x1 + j, y1);
+            }
+        }
+        y1 += 1;
+    }
+}
+
+void desenha_onibus(VEICULO carro, COLORS cor) {
+    short x1 = carro.envelope[0].x;
+    short y1 = carro.envelope[0].y;
+    short x2 = carro.envelope[1].x;
+    short y2 = carro.envelope[1].y;
+    short width = x2 - x1 + 1;
+    short height = y2 - y1 + 1;
+
+    char *content[3] = {
+        " oo     o ",
+        "=|||||||(8",
+        " oo     o "};
+
+    if(carro.dir == ESQ) {
+        content[0] = " o     oo ";
+        content[1] = "8)|||||||=";
+        content[2] = " o     oo ";
+    }
+
     textcolor(cor);
 
     for (int i = 0; i < height; i++) {
