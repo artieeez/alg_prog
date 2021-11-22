@@ -22,11 +22,6 @@ int main(void) {
     /* Inicializacoes */
     inicializa_jogador(&jog);
 
-    /* clear the screen */
-    clrscr();
-    /* Desenha a borda */
-    desenha_borda(X_MIN, Y_MIN, X_MAX, Y_MAX);
-
     /* Game loop */
     game_loop(
         &jog,

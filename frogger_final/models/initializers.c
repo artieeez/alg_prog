@@ -20,7 +20,7 @@ void get_coord_veic(COORDENADA env[], TIPO_VEICULO tipo, short x) {
     return;
 }
 
-void inicializa_veiculos(VEICULO lista_veiculos[], DIRECAO_MOVIMENTO dir) {
+void inicializa_veiculos(ESTADO estado, VEICULO lista_veiculos[], DIRECAO_MOVIMENTO dir) {
     TIPO_VEICULO tipo = ESPORTE;
     short posicao[NUM_VEICULOS] = {
         2, 50, 80};
@@ -35,6 +35,12 @@ void inicializa_veiculos(VEICULO lista_veiculos[], DIRECAO_MOVIMENTO dir) {
         tmp.pista = 0;
         tmp.valido = 1;
         tmp.fase = 0;
+
+        if(estado.fase == 1) {
+            tmp.velocidade = VEL_1;
+        } else {
+            tmp.velocidade = VEL_2;
+        }
 
         lista_veiculos[i] = tmp;
     }

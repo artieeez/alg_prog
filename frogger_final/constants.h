@@ -41,11 +41,17 @@ typedef enum
 } CORES;
 
 typedef enum
+{
+    FASE_1 = 1,
+    FASE_2 = 2,
+} FASE;
+
+typedef enum
 // constantes com o id de cada entidade do jogo
 {
-    FASE_1 = 10,
-    FASE_2 = 5,
-} GAME_SPEED;
+    VEL_1 = 4,
+    VEL_2 = 6,
+} VELOCIDADE;
 
 typedef enum
 // constantes com o id de cada entidade do jogo

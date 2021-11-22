@@ -49,11 +49,11 @@ typedef struct
     int pista;
     short valido;
     int fase;
+    VELOCIDADE velocidade;
 } VEICULO;
 
 typedef struct
 {
-    GAME_SPEED game_speed;
     int fase;
     short indice_sapo;
     JOGADOR jogador;

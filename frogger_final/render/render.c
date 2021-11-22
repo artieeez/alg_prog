@@ -12,6 +12,7 @@ void desenha_borda(int x_min, int y_min, int x_max, int y_max) {
         x2, y2 : canto inferior direito da tela.
     */
     int i;
+    textcolor(WHITE);
     gotoxy(x_min, y_min);
     for (i = x_min; i <= x_max; i++) {
         putch('=');

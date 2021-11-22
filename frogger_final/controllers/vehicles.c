@@ -30,11 +30,11 @@ void desenha_lista_veiculos(VEICULO lista_veiculos[], bool apagar) {
 
         if (!apagar) {
             if (lista_veiculos[i].dir == DIR) {
-                tmp_envelope1->x += VEIC_SPEED;
-                tmp_envelope2->x += VEIC_SPEED;
+                tmp_envelope1->x += tmp_veiculo->velocidade;
+                tmp_envelope2->x += tmp_veiculo->velocidade;
             } else if (lista_veiculos[i].dir == ESQ) {
-                tmp_envelope1->x -= VEIC_SPEED;
-                tmp_envelope2->x -= VEIC_SPEED;
+                tmp_envelope1->x -= tmp_veiculo->velocidade;
+                tmp_envelope2->x -= tmp_veiculo->velocidade;
             }
 
             tmp_veiculo->valido = desenha_veiculo(*tmp_veiculo,

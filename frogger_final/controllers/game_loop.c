@@ -83,7 +83,6 @@ void game_loop(
     short indice_sapo = 0;
 
     ESTADO estado = {
-        .game_speed = FASE_1,
         .fase = 1,
         .status = RUNNING,
         .indice_sapo = indice_sapo,
@@ -92,38 +91,33 @@ void game_loop(
         .lista_veiculos = *lista_veiculos,
     };
 
-    inicializa_veiculos(estado.lista_veiculos, DIR);
-    inicializa_sapos(estado.lista_sapos);
-
-    ativa_sapo(&estado.lista_sapos[indice_sapo]);
-    desenha_sapo(
-        estado.lista_sapos[indice_sapo].envelope[0],
-        estado.lista_sapos[indice_sapo].envelope[1],
-        estado.lista_sapos[indice_sapo].cor);
-
-    Beep(100, 150);
-    Beep(400, 100);
-
     int counter = 0;
     while (estado.status != HALT) {
-        /* fase 2 */
-        if(estado.status == WIN) {
-            estado.game_speed = FASE_2;
-            estado.indice_sapo = 0;
-            estado.jogador.sapos_salvos = 0;
-            estado.jogador.score = 0;
-        }
+        /* clear the screen */
+        clrscr();
+        /* Desenha a borda */
+        desenha_borda(X_MIN, Y_MIN, X_MAX, Y_MAX);
 
+        inicializa_sapos(estado.lista_sapos);
+        inicializa_veiculos(estado, estado.lista_veiculos, DIR);
+        ativa_sapo(&estado.lista_sapos[indice_sapo]);
+        desenha_sapo(
+            estado.lista_sapos[indice_sapo].envelope[0],
+            estado.lista_sapos[indice_sapo].envelope[1],
+            estado.lista_sapos[indice_sapo].cor);
+        Beep(100, 150);
+        Beep(400, 100);
 
         while (indice_sapo < NUM_SAPO && (estado.status == RUNNING)) {
             /* 1 - Desenha veiculos nos frames determinados ------------------------------ */
-            if (counter == 30 || counter == 15) {
+
+            if (counter == 10 || counter == 20 || counter == 30) {
                 desenha_lista_veiculos(estado.lista_veiculos, false);
             }
 
             /* Impede que cursor fique piscando no meio da tela */
             gotoxy(X_MAX, Y_MAX);
-            Sleep(estado.game_speed);
+            Sleep(30);
 
             /* 2 - Captura acao do usuario ----------------------------------------------- */
             int action = capture_action();
@@ -152,8 +146,14 @@ void game_loop(
         if (estado.status == WIN || estado.status == LOOSE) {
             calcula_score(&estado.jogador);
 
-            /* passa fase */
-            estado.fase++;
+            /* fase 2 */
+            if (estado.status == WIN) {
+                estado.fase++;
+                estado.indice_sapo = 0;
+                estado.jogador.sapos_salvos = 0;
+                estado.jogador.score = 0;
+                estado.status = RUNNING;
+            }
 
             vence_jogo(&estado);
         }
