@@ -13,35 +13,7 @@ void handleAction(
     int action,
     ESTADO *estado);
 void vence_jogo(ESTADO *estado);
-
-void display_game_status(JOGADOR *jog, short indice_sapo) {
-    textcolor(WHITE);
-
-    gotoxy(X_MIN, Y_MIN - 2);
-    if (NUM_SAPO - indice_sapo <= 1) {
-        textcolor(RED);
-    }
-    short tempo_jogo = time(NULL) - jog->inicio_jogo;
-    float score;
-    if (tempo_jogo == 0) {
-        score = 0;
-    } else {
-        score = (float)(10000 * jog->sapos_salvos) / (float)tempo_jogo;
-    }
-    printf("Sapos vivos: %d\n", NUM_SAPO - indice_sapo);
-    gotoxy(X_MIN, Y_MIN - 1);
-    printf("(P)ausa");
-    gotoxy(52, Y_MIN - 2);
-    printf("Sapos salvos: %d", jog->sapos_salvos);
-    //gotoxy( 50, Y_MIN - 1);
-    //printf("Score: %8.2f", score);
-    gotoxy(90, Y_MIN - 2);
-    printf("Tempo de jogo: %3ds", tempo_jogo);
-    gotoxy(90, Y_MIN - 1);
-    printf("(C)arregar");
-
-    gotoxy(X_MAX, Y_MAX);
-}
+void perde_jogo();
 
 bool is_render_frame(short f) {
     return (
@@ -129,14 +101,15 @@ void game_loop(
 
             /* Executa mata_sapo apenas nos frames onde o carro ou o sapo se move */
             if (is_render_frame(counter) || action) {
+                int morreu;
                 for (int i = 0; i < NUM_PISTAS; i++) {
-                    mata_sapo(estado.lista_sapos, &estado.indice_sapo, estado.lista_veiculos[i]);
+                    mata_sapo(&estado, estado.lista_sapos, &estado.indice_sapo, estado.lista_veiculos[i]);
                 }
 
                 /* Verifica se sapo foi salvo */
                 salva_sapo(&estado);
 
-                display_game_status(&estado.jogador, estado.indice_sapo);
+                display_game_status(estado, &estado.jogador, estado.indice_sapo);
             }
 
             if (counter == 30) {
@@ -146,8 +119,10 @@ void game_loop(
             }
 
         }  // FIM LOOP DA FASE
-        if (estado.status == WIN || estado.status == LOOSE) {
+        if (estado.status == WIN) {
             calcula_score(&estado.jogador);
+
+            vence_jogo(&estado);
 
             /* fase 2 */
             if (estado.status == WIN) {
@@ -155,10 +130,17 @@ void game_loop(
                 estado.indice_sapo = 0;
                 estado.jogador.sapos_salvos = 0;
                 estado.jogador.score = 0;
+                estado.jogador.inicio_jogo = time(NULL);
                 estado.status = RUNNING;
             }
 
-            vence_jogo(&estado);
+        } else if (estado.status == LOOSE) {
+            perde_jogo();
+            estado.indice_sapo = 0;
+            estado.jogador.sapos_salvos = 0;
+            estado.jogador.score = 0;
+            estado.jogador.inicio_jogo = time(NULL);
+            estado.status = RUNNING;
         }
     }  // FIM DO GAME_LOOP
 }
@@ -204,6 +186,25 @@ void vence_jogo(ESTADO *estado) {
     gotoxy(50, 15);
     printf("Seu score final: %d\n", estado->jogador.score);
     gotoxy(X_MAX, Y_MAX);
+    Sleep(1500);
+
+    gotoxy(42, 16);
+    textcolor(WHITE);
+    printf("Aperte qualquer tecla para continuar");
+    getch();
+    gotoxy(44, 14);
+    textcolor(COR_FUNDO);
+    printf("MAIS CUIDADO NA PROXIMA, QUE TAL?");
+    gotoxy(42, 15);
+    printf("Aperte qualquer tecla para continuar");
+
+    return;
+}
+
+void perde_jogo() {
+    textcolor(WHITE);
+    gotoxy(54, 14);
+    printf("VOCE PERDEU");
     Sleep(1500);
 
     gotoxy(42, 16);

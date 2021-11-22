@@ -44,7 +44,7 @@ void move_sapo(SAPO *s, DIRECAO_MOVIMENTO dir) {
     return;
 }
 
-int mata_sapo(SAPO lista_sapos[], short *indice_sapo, VEICULO lista_veiculos[]) {
+int mata_sapo(ESTADO *estado, SAPO lista_sapos[], short *indice_sapo, VEICULO lista_veiculos[]) {
     SAPO *_sapo = &lista_sapos[*indice_sapo];
 
     /* --  ITEM A  ---------------------------------------------------------- */
@@ -81,7 +81,7 @@ int mata_sapo(SAPO lista_sapos[], short *indice_sapo, VEICULO lista_veiculos[]) 
             _sapo->envelope[0].y = POS_INICIAL_SAPO_Y;
             _sapo->envelope[1].y = POS_INICIAL_SAPO_Y + 1;
 
-            if (*indice_sapo <= NUM_SAPO - 1) {
+            if (*indice_sapo < NUM_SAPO - 1) {
                 *indice_sapo += 1;
                 SAPO *novo_sapo = &lista_sapos[*indice_sapo];
                 novo_sapo->envelope[0].x = DEFAULT_PLAYER_X;
@@ -93,7 +93,16 @@ int mata_sapo(SAPO lista_sapos[], short *indice_sapo, VEICULO lista_veiculos[]) 
                 Beep(400, 100);
                 return 1;
             } else {
-                return 2;
+                SAPO *novo_sapo = &lista_sapos[*indice_sapo];
+                novo_sapo->envelope[0].x = DEFAULT_PLAYER_X;
+                novo_sapo->envelope[1].x = DEFAULT_PLAYER_X + 7;
+                novo_sapo->envelope[0].y = DEFAULT_PLAYER_Y;
+                novo_sapo->envelope[1].y = DEFAULT_PLAYER_Y + 1;
+                desenha_sapo(novo_sapo->envelope[0], novo_sapo->envelope[1], COR_SAPO);
+                Beep(100, 150);
+                Beep(400, 100);
+                estado->status = LOOSE;
+                return LOOSE;
             }
         }
     }

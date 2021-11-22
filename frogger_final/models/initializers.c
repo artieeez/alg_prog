@@ -100,6 +100,21 @@ void inicializa_veiculos(ESTADO estado, VEICULO lista_veiculos[], DIRECAO_MOVIME
             tmp.velocidade = VEL_2;
         }
 
+        switch (pista) {
+        case PISTA_1:
+            tmp.velocidade = tmp.velocidade - 1;
+            break;
+        case PISTA_2:
+            tmp.velocidade = tmp.velocidade;
+            break;
+        case PISTA_3:
+            tmp.velocidade = tmp.velocidade - 2;
+            break;
+        case PISTA_4:
+            tmp.velocidade = tmp.velocidade -1;
+            break;
+    }
+
         lista_veiculos[i] = tmp;
     }
     return;

@@ -201,3 +201,34 @@ void desenha_onibus(VEICULO carro, COLORS cor) {
         y1 += 1;
     }
 }
+
+void display_game_status(ESTADO estado, JOGADOR *jog, short indice_sapo) {
+    textcolor(WHITE);
+
+    gotoxy(X_MIN, Y_MIN - 2);
+    if (NUM_SAPO - indice_sapo <= 1) {
+        textcolor(RED);
+    }
+    short tempo_jogo = time(NULL) - jog->inicio_jogo;
+    float score;
+    if (tempo_jogo == 0) {
+        score = 0;
+    } else {
+        score = (float)(10000 * jog->sapos_salvos) / (float)tempo_jogo;
+    }
+    printf("Sapos vivos: %d\n", NUM_SAPO - indice_sapo);
+    gotoxy(X_MIN, Y_MIN - 1);
+    printf("(P)ausa");
+    gotoxy(52, Y_MIN - 2);
+    printf("Sapos salvos: %d", jog->sapos_salvos);
+    gotoxy(56, Y_MIN - 1);
+    printf("Fase: %d", estado.fase);
+    //gotoxy( 50, Y_MIN - 1);
+    //printf("Score: %8.2f", score);
+    gotoxy(90, Y_MIN - 2);
+    printf("Tempo de jogo: %3ds", tempo_jogo);
+    gotoxy(90, Y_MIN - 1);
+    printf("(C)arregar");
+
+    gotoxy(X_MAX, Y_MAX);
+}

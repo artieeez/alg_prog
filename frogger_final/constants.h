@@ -4,7 +4,7 @@
 #define TAM_MAX_NOME_JOGADOR 20
 #define NUM_VEICULOS 3
 #define NUM_PISTAS 4
-#define NUM_SAPO 1
+#define NUM_SAPO 6
 #define VEIC_SPEED 4
 #define SAPO_SPEED_X 8
 #define SAPO_SPEED_Y 2
@@ -59,8 +59,8 @@ typedef enum {
 typedef enum
 // constantes com o id de cada entidade do jogo
 {
-    VEL_1 = 4,
-    VEL_2 = 6,
+    VEL_1 = 3,
+    VEL_2 = 5,
 } VELOCIDADE;
 
 typedef enum
