@@ -57,7 +57,7 @@ typedef struct
     int fase;
     short indice_sapo;
     JOGADOR jogador;
-    VEICULO lista_veiculos[NUM_VEICULOS];
+    VEICULO lista_veiculos[NUM_PISTAS][NUM_VEICULOS];
     SAPO lista_sapos[NUM_SAPO];
     STATUS_JOGO status;
 } ESTADO;

@@ -59,28 +59,12 @@ void ativa_sapo(SAPO *s) {
     return;
 }
 
-void instancia_jogo(
-    ESTADO estado,
-    SAPO lista_sapos[],
-    VEICULO lista_veiculos[],
-    JOGADOR *jogador,
-    short *indice_sapo) {
-    for (int i = 0; i < NUM_SAPO; i++) {
-        lista_sapos[i] = estado.lista_sapos[i];
-    }
-    for (int i = 0; i < NUM_VEICULOS; i++) {
-        lista_veiculos[i] = estado.lista_veiculos[i];
-    }
-    *jogador = estado.jogador;
-    *indice_sapo = estado.indice_sapo;
-    return;
-}
-
 void game_loop(
     JOGADOR *jog,
-    SAPO lista_sapos[],
-    VEICULO lista_veiculos[]) {
+    SAPO lista_sapos[]) {
     short indice_sapo = 0;
+
+    VEICULO lista_veiculos[NUM_PISTAS][NUM_VEICULOS] = {0};
 
     ESTADO estado = {
         .fase = 1,
@@ -88,7 +72,7 @@ void game_loop(
         .indice_sapo = indice_sapo,
         .jogador = *jog,
         .lista_sapos = *lista_sapos,
-        .lista_veiculos = *lista_veiculos,
+        .lista_veiculos = {0},
     };
 
     int counter = 0;
@@ -99,7 +83,22 @@ void game_loop(
         desenha_borda(X_MIN, Y_MIN, X_MAX, Y_MAX);
 
         inicializa_sapos(estado.lista_sapos);
-        inicializa_veiculos(estado, estado.lista_veiculos, DIR);
+        for (int i = 0; i < NUM_PISTAS; i++) {
+            switch (i) {
+                case PISTA_1:
+                    inicializa_veiculos(estado, estado.lista_veiculos[i], DIR, PISTA_1);
+                    break;
+                case PISTA_2:
+                    inicializa_veiculos(estado, estado.lista_veiculos[i], DIR, PISTA_2);
+                    break;
+                case PISTA_3:
+                    inicializa_veiculos(estado, estado.lista_veiculos[i], ESQ, PISTA_3);
+                    break;
+                case PISTA_4:
+                    inicializa_veiculos(estado, estado.lista_veiculos[i], ESQ, PISTA_4);
+                    break;
+            }
+        }
         ativa_sapo(&estado.lista_sapos[indice_sapo]);
         desenha_sapo(
             estado.lista_sapos[indice_sapo].envelope[0],
@@ -112,7 +111,9 @@ void game_loop(
             /* 1 - Desenha veiculos nos frames determinados ------------------------------ */
 
             if (counter == 10 || counter == 20 || counter == 30) {
-                desenha_lista_veiculos(estado.lista_veiculos, false);
+                for (int i = 0; i < NUM_PISTAS; i++) {
+                    desenha_lista_veiculos(estado.lista_veiculos[i], false);
+                }
             }
 
             /* Impede que cursor fique piscando no meio da tela */
@@ -128,7 +129,9 @@ void game_loop(
 
             /* Executa mata_sapo apenas nos frames onde o carro ou o sapo se move */
             if (is_render_frame(counter) || action) {
-                mata_sapo(estado.lista_sapos, &estado.indice_sapo, estado.lista_veiculos);
+                for (int i = 0; i < NUM_PISTAS; i++) {
+                    mata_sapo(estado.lista_sapos, &estado.indice_sapo, estado.lista_veiculos[i]);
+                }
 
                 /* Verifica se sapo foi salvo */
                 salva_sapo(&estado);
@@ -173,17 +176,13 @@ void handleAction(
         break;
         case 7: {
             pausa(estado);
-            desenha_lista_veiculos(estado->lista_veiculos, true);
+            for (int i = 0; i < NUM_PISTAS; i++) {
+                desenha_lista_veiculos(estado->lista_veiculos[i], true);
+            }
             desenha_sapo(
                 estado->lista_sapos[estado->indice_sapo].envelope[0],
                 estado->lista_sapos[estado->indice_sapo].envelope[1], COR_FUNDO);
             le_jogo_salvo(estado, estado->jogador.nome);
-            instancia_jogo(
-                *estado,
-                estado->lista_sapos,
-                estado->lista_veiculos,
-                &estado->jogador,
-                &estado->indice_sapo);
             desenha_sapo(
                 estado->lista_sapos[estado->indice_sapo].envelope[0],
                 estado->lista_sapos[estado->indice_sapo].envelope[1],

@@ -3,7 +3,6 @@
 
 void game_loop(
     JOGADOR *jog,
-    SAPO lista_sapos[],
-    VEICULO lista_veiculos[]);
+    SAPO lista_sapos[]);
 
 #endif

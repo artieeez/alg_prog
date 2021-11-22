@@ -1,7 +1,7 @@
 #include "headers/models.h"
 #include "../constants.h"
 
-void get_coord_veic(COORDENADA env[], TIPO_VEICULO tipo, short x) {
+void get_coord_veic(COORDENADA env[], TIPO_VEICULO tipo, short x, PISTA pista) {
     COORDENADA env1;
     COORDENADA env2;
     short width, height;
@@ -15,28 +15,71 @@ void get_coord_veic(COORDENADA env[], TIPO_VEICULO tipo, short x) {
     env2.x = x + width - 1;
     env1.y = PISTA_1_Y;
     env2.y = env1.y + height - 1;
+
+    switch (pista) {
+        case PISTA_1:
+            env1.y = PISTA_1_Y;
+            env2.y = env1.y + height - 1;
+            break;
+        case PISTA_2:
+            env1.y = PISTA_2_Y;
+            env2.y = env1.y + height - 1;
+            break;
+        case PISTA_3:
+            env1.y = PISTA_3_Y;
+            env2.y = env1.y + height - 1;
+            break;
+        case PISTA_4:
+            env1.y = PISTA_4_Y;
+            env2.y = env1.y + height - 1;
+            break;
+            return;
+    }
+
     env[0] = env1;
     env[1] = env2;
-    return;
 }
 
-void inicializa_veiculos(ESTADO estado, VEICULO lista_veiculos[], DIRECAO_MOVIMENTO dir) {
+void inicializa_veiculos(ESTADO estado, VEICULO lista_veiculos[], DIRECAO_MOVIMENTO dir, PISTA pista) {
     TIPO_VEICULO tipo = ESPORTE;
-    short posicao[NUM_VEICULOS] = {
-        2, 50, 80};
+    short posicao[NUM_VEICULOS] = {0};
+
+    switch (pista) {
+        case PISTA_1:
+            posicao[0] = 2;
+            posicao[1] = 50;
+            posicao[2] = 80;
+            break;
+        case PISTA_2:
+            posicao[0] = 8;
+            posicao[1] = 24;
+            posicao[2] = 46;
+            break;
+        case PISTA_3:
+            posicao[0] = 22;
+            posicao[1] = 64;
+            posicao[2] = 85;
+            break;
+        case PISTA_4:
+            posicao[0] = 3;
+            posicao[1] = 16;
+            posicao[2] = 32;
+            break;
+    }
+
     for (int i = 0; i < NUM_VEICULOS; i++) {
         VEICULO tmp;
-        get_coord_veic(tmp.envelope, tipo, posicao[i]);
+        get_coord_veic(tmp.envelope, tipo, posicao[i], pista);
         tmp.tipo = ESPORTE;
-        tmp.dir = DIR;
+        tmp.dir = dir;
         tmp.tamanho = 4;
 
         tmp.distancia = 0;
-        tmp.pista = 0;
+        tmp.pista = pista;
         tmp.valido = 1;
         tmp.fase = 0;
 
-        if(estado.fase == 1) {
+        if (estado.fase == 1) {
             tmp.velocidade = VEL_1;
         } else {
             tmp.velocidade = VEL_2;
@@ -47,13 +90,13 @@ void inicializa_veiculos(ESTADO estado, VEICULO lista_veiculos[], DIRECAO_MOVIME
     return;
 }
 
-void inicializa_jogador(JOGADOR *jog) {
+void inicializa_jogador(JOGADOR* jog) {
     jog->sapos_salvos = 0;
     jog->inicio_jogo = time(NULL);
     jog->tempo_jogo = 0;
     jog->score = 0;
 
-    for(int i = 0; i < TAM_MAX_NOME_JOGADOR; i++) {
+    for (int i = 0; i < TAM_MAX_NOME_JOGADOR; i++) {
         jog->nome[i] = '\0';
     }
     return;
@@ -79,5 +122,3 @@ void inicializa_sapos(SAPO lista_sapos[]) {
     }
     return;
 }
-
-

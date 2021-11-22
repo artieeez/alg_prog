@@ -15,7 +15,6 @@ João Pedro Telles Fava
 #include "models/headers/initializers.h"
 
 int main(void) {
-    VEICULO lista_veiculos[NUM_VEICULOS];
     SAPO lista_sapos[NUM_SAPO];
     JOGADOR jog;
 
@@ -25,8 +24,7 @@ int main(void) {
     /* Game loop */
     game_loop(
         &jog,
-        lista_sapos,
-        lista_veiculos);
+        lista_sapos);
 
     getch();
     return 0;

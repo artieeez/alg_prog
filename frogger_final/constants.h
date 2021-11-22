@@ -3,11 +3,15 @@
 
 #define TAM_MAX_NOME_JOGADOR 20
 #define NUM_VEICULOS 3
+#define NUM_PISTAS 4
 #define NUM_SAPO 1
 #define VEIC_SPEED 4
 #define SAPO_SPEED_X 8
 #define SAPO_SPEED_Y 2
-#define PISTA_1_Y 10
+#define PISTA_1_Y 6
+#define PISTA_2_Y 10
+#define PISTA_3_Y 17
+#define PISTA_4_Y 21
 
 #define X_MIN 12
 #define X_MAX 108
@@ -40,8 +44,14 @@ typedef enum
     COR_FUNDO = BLACK,
 } CORES;
 
-typedef enum
-{
+typedef enum {
+    PISTA_1 = 0,
+    PISTA_2 = 1,
+    PISTA_3 = 2,
+    PISTA_4 = 3,
+} PISTA;
+
+typedef enum {
     FASE_1 = 1,
     FASE_2 = 2,
 } FASE;

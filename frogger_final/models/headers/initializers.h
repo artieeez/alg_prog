@@ -5,6 +5,6 @@
 
 void inicializa_jogador(JOGADOR *jog);
 void inicializa_sapos(SAPO lista_sapos[]);
-void inicializa_veiculos(ESTADO estado, VEICULO lista_veiculos[], DIRECAO_MOVIMENTO dir);
+void inicializa_veiculos(ESTADO estado, VEICULO lista_veiculos[NUM_VEICULOS], DIRECAO_MOVIMENTO dir, PISTA pista);
 
 #endif
