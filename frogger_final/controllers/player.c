@@ -9,11 +9,11 @@ int capture_action() {
         char c = getch();
 
         if (c == 'p') {
-            return 6;
+            return PAUSE;
         } else if (c == 'c') {
-            return 7;
+            return LOAD;
         } else if (c == ESC) {
-            return 5;
+            return EXIT;
         }
 
         if ((int)c == ESPECIAL) {

@@ -92,4 +92,10 @@ typedef enum {
     DIR = 4
 } DIRECAO_MOVIMENTO;
 
+typedef enum {
+    PAUSE = 5,
+    LOAD = 6,
+    EXIT = 7,
+} ACTION;
+
 #endif

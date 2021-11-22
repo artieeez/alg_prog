@@ -149,19 +149,19 @@ void handleAction(
     int action,
     ESTADO *estado) {
     switch (action) {
-        case 5: {
+        case EXIT: {
             sair();
             estado->status = HALT;
             break;
         }
-        case 6: {
+        case PAUSE: {
             pausa(estado);
             salva_jogo(*estado);
             estado->status = HALT;
         }
 
         break;
-        case 7: {
+        case LOAD: {
             pausa(estado);
             for (int i = 0; i < NUM_PISTAS; i++) {
                 desenha_lista_veiculos(estado->lista_veiculos[i], true);
