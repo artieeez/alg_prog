@@ -44,7 +44,7 @@ void move_sapo(SAPO *s, DIRECAO_MOVIMENTO dir) {
     return;
 }
 
-int mata_sapo(ESTADO *estado, SAPO lista_sapos[], short *indice_sapo, VEICULO lista_veiculos[]) {
+void mata_sapo(ESTADO *estado, SAPO lista_sapos[], short *indice_sapo, VEICULO lista_veiculos[]) {
     SAPO *_sapo = &lista_sapos[*indice_sapo];
 
     /* --  ITEM A  ---------------------------------------------------------- */
@@ -91,7 +91,7 @@ int mata_sapo(ESTADO *estado, SAPO lista_sapos[], short *indice_sapo, VEICULO li
                 desenha_sapo(novo_sapo->envelope[0], novo_sapo->envelope[1], COR_SAPO);
                 Beep(100, 150);
                 Beep(400, 100);
-                return 1;
+                return;
             } else {
                 SAPO *novo_sapo = &lista_sapos[*indice_sapo];
                 novo_sapo->envelope[0].x = DEFAULT_PLAYER_X;
@@ -101,12 +101,16 @@ int mata_sapo(ESTADO *estado, SAPO lista_sapos[], short *indice_sapo, VEICULO li
                 desenha_sapo(novo_sapo->envelope[0], novo_sapo->envelope[1], COR_SAPO);
                 Beep(100, 150);
                 Beep(400, 100);
-                estado->status = LOOSE;
-                return LOOSE;
+                if (estado->jogador.sapos_salvos > 0) {
+                    estado->status = WIN;
+                } else {
+                    estado->status = LOOSE;
+                }
+                return;
             }
         }
     }
-    return 0;
+    return;
 }
 
 void move_sapo_borda(SAPO *sapo, int indice) {

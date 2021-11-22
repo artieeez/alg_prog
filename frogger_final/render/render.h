@@ -10,5 +10,7 @@ void desenha_onibus(VEICULO carro, COLORS cor);
 void explosao(COORDENADA env1, COORDENADA env2);
 void desenha_sapo(COORDENADA pos1, COORDENADA pos2, COLORS color);
 void display_game_status(ESTADO estado, JOGADOR *jog, short indice_sapo);
+void display_perde_jogo();
+void display_vence_jogo(ESTADO *estado);
 
 #endif

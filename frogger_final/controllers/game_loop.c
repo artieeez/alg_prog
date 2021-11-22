@@ -12,8 +12,8 @@
 void handleAction(
     int action,
     ESTADO *estado);
-void vence_jogo(ESTADO *estado);
-void perde_jogo();
+void display_vence_jogo(ESTADO *estado);
+void display_perde_jogo();
 
 bool is_render_frame(short f) {
     return (
@@ -119,12 +119,13 @@ void game_loop(
             }
 
         }  // FIM LOOP DA FASE
+
+        /* WIN */
         if (estado.status == WIN) {
             calcula_score(&estado.jogador);
 
-            vence_jogo(&estado);
+            display_vence_jogo(&estado);
 
-            /* fase 2 */
             if (estado.status == WIN) {
                 estado.fase++;
                 estado.indice_sapo = 0;
@@ -134,8 +135,9 @@ void game_loop(
                 estado.status = RUNNING;
             }
 
+            /* LOOSE */
         } else if (estado.status == LOOSE) {
-            perde_jogo();
+            display_perde_jogo();
             estado.indice_sapo = 0;
             estado.jogador.sapos_salvos = 0;
             estado.jogador.score = 0;
@@ -182,45 +184,4 @@ void handleAction(
             Beep(2200, 5);
             break;
     }
-}
-
-void vence_jogo(ESTADO *estado) {
-    textcolor(WHITE);
-    gotoxy(54, 14);
-    printf("VOCE VENCEU\n");
-    gotoxy(50, 15);
-    printf("Seu score final: %d\n", estado->jogador.score);
-    gotoxy(X_MAX, Y_MAX);
-    Sleep(1500);
-
-    gotoxy(42, 16);
-    textcolor(WHITE);
-    printf("Aperte qualquer tecla para continuar");
-    getch();
-    gotoxy(44, 14);
-    textcolor(COR_FUNDO);
-    printf("MAIS CUIDADO NA PROXIMA, QUE TAL?");
-    gotoxy(42, 15);
-    printf("Aperte qualquer tecla para continuar");
-
-    return;
-}
-
-void perde_jogo() {
-    textcolor(WHITE);
-    gotoxy(54, 14);
-    printf("VOCE PERDEU");
-    Sleep(1500);
-
-    gotoxy(42, 16);
-    textcolor(WHITE);
-    printf("Aperte qualquer tecla para continuar");
-    getch();
-    gotoxy(44, 14);
-    textcolor(COR_FUNDO);
-    printf("MAIS CUIDADO NA PROXIMA, QUE TAL?");
-    gotoxy(42, 15);
-    printf("Aperte qualquer tecla para continuar");
-
-    return;
 }

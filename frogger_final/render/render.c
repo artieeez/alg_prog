@@ -232,3 +232,44 @@ void display_game_status(ESTADO estado, JOGADOR *jog, short indice_sapo) {
 
     gotoxy(X_MAX, Y_MAX);
 }
+
+void display_perde_jogo() {
+    textcolor(WHITE);
+    gotoxy(54, 14);
+    printf("VOCE PERDEU");
+    Sleep(1500);
+
+    gotoxy(42, 16);
+    textcolor(WHITE);
+    printf("Aperte qualquer tecla para continuar");
+    getch();
+    gotoxy(44, 14);
+    textcolor(COR_FUNDO);
+    printf("MAIS CUIDADO NA PROXIMA, QUE TAL?");
+    gotoxy(42, 15);
+    printf("Aperte qualquer tecla para continuar");
+
+    return;
+}
+
+void display_vence_jogo(ESTADO *estado) {
+    textcolor(WHITE);
+    gotoxy(54, 14);
+    printf("VOCE VENCEU\n");
+    gotoxy(50, 15);
+    printf("Seu score final: %d\n", estado->jogador.score);
+    gotoxy(X_MAX, Y_MAX);
+    Sleep(1500);
+
+    gotoxy(42, 16);
+    textcolor(WHITE);
+    printf("Aperte qualquer tecla para continuar");
+    getch();
+    gotoxy(44, 14);
+    textcolor(COR_FUNDO);
+    printf("MAIS CUIDADO NA PROXIMA, QUE TAL?");
+    gotoxy(42, 15);
+    printf("Aperte qualquer tecla para continuar");
+
+    return;
+}
