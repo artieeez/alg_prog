@@ -149,6 +149,11 @@ void handleAction(
     int action,
     ESTADO *estado) {
     switch (action) {
+        case 5: {
+            sair();
+            estado->status = HALT;
+            break;
+        }
         case 6: {
             pausa(estado);
             salva_jogo(*estado);

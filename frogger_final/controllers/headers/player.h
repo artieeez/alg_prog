@@ -6,5 +6,6 @@
 int capture_action();
 void pausa(ESTADO *estado);
 void calcula_score(JOGADOR *jog);
+void sair();
 
 #endif

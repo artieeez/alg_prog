@@ -218,7 +218,7 @@ void display_game_status(ESTADO estado, JOGADOR *jog, short indice_sapo) {
     }
     printf("Sapos vivos: %d\n", NUM_SAPO - indice_sapo);
     gotoxy(X_MIN, Y_MIN - 1);
-    printf("(P)ausa");
+    printf("(P)ausa      (ESC)Sair");
     gotoxy(52, Y_MIN - 2);
     printf("Sapos salvos: %d", jog->sapos_salvos);
     gotoxy(56, Y_MIN - 1);

@@ -53,3 +53,16 @@ void calcula_score(JOGADOR *jog) {
     jog->score = (10000 * jog->sapos_salvos) / jog->tempo_jogo;
     return;
 }
+
+void sair() {
+    textcolor(WHITE);
+    gotoxy(54, 14);
+    printf("ATE MAIS TARDE!\n");
+    Sleep(1500);
+    gotoxy(42, 16);
+    textcolor(WHITE);
+    printf("Aperte qualquer tecla para encerrar...");
+    getch();
+    return;
+}
+

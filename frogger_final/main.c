@@ -29,3 +29,11 @@ int main(void) {
     getch();
     return 0;
 }
+
+/*
+Itens não atendidos: 
+
+16. Ranking
+
+*/
+
